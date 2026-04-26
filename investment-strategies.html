@@ -453,6 +453,72 @@
     .step-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
     .step-desc { font-size: 14px; color: var(--text-sub); line-height: 1.6; margin: 0; }
 
+    /* ── C2 Setup Banner ── */
+    .c2-setup-banner {
+      margin-top: 36px;
+      background: var(--dark);
+      border-radius: 16px;
+      padding: 28px 36px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .c2-setup-banner-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .c2-setup-icon {
+      flex-shrink: 0;
+      width: 48px;
+      height: 48px;
+      background: oklch(52% 0.18 240 / 0.25);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .c2-setup-icon svg { width: 24px; height: 24px; stroke: var(--blue-mid); fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+
+    .c2-setup-text {}
+    .c2-setup-text strong {
+      display: block;
+      font-size: 16px;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 4px;
+    }
+    .c2-setup-text span {
+      font-size: 14px;
+      color: oklch(65% 0.05 240);
+      line-height: 1.5;
+    }
+
+    .c2-setup-btn {
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--blue);
+      color: white;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 12px 22px;
+      border-radius: 10px;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .c2-setup-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+    .c2-setup-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+
+    @media (max-width: 900px) {
+      .c2-setup-banner { flex-direction: column; align-items: flex-start; padding: 24px; }
+    }
+
     /* ── Fit section ── */
     .fit-grid {
       display: grid;
@@ -893,6 +959,23 @@
         <div class="step-title">Stay in control</div>
         <p class="step-desc">Your money never leaves your broker. Pause, override, or unsubscribe at any time.</p>
       </div>
+    </div>
+
+    <!-- C2 Setup Guide Banner -->
+    <div class="c2-setup-banner">
+      <div class="c2-setup-banner-left">
+        <div class="c2-setup-icon">
+          <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>
+        </div>
+        <div class="c2-setup-text">
+          <strong>Step-by-step Auto Trading setup guide</strong>
+          <span>Collective2's official walkthrough — broker connection, scaling, and going live in under 20 minutes.</span>
+        </div>
+      </div>
+      <a class="c2-setup-btn" href="https://collective2.com/lets-get-started" target="_blank" rel="noopener">
+        View Setup Guide
+        <svg viewBox="0 0 14 14"><line x1="2" y1="7" x2="12" y2="7"/><polyline points="8,3 12,7 8,11"/></svg>
+      </a>
     </div>
   </div>
 
