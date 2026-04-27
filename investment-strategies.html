@@ -679,6 +679,18 @@
     }
   </style>
   <link rel="icon" type="image/png" href="uploads/website_logo_transparent_background.png" />
+  <script>if(localStorage.getItem('sps-theme')==='dark')document.documentElement.classList.add('dark');</script>
+  <style>
+    /* ── Dark mode overrides ── */
+    html.dark body { --bg:#0f172a; --surface:#1e293b; --border:rgba(255,255,255,0.08); --text-main:#f1f5f9; --text-sub:#94a3b8; --blue-light:rgba(88,166,255,0.1); --blue-glow:oklch(52% 0.18 240 / 0.2); }
+    html.dark .problem-section { background:#131f35; border-color:rgba(255,255,255,0.05); }
+    html.dark .perf-card, html.dark .strategy-card, html.dark .fit-card, html.dark .about-block { background:#1e293b; border-color:rgba(255,255,255,0.08); }
+    html.dark .faq-q:hover { background:#1e293b; }
+    html.dark footer { background:#1e293b; }
+    html.dark .lev-callout { background:rgba(88,166,255,0.08); }
+    .theme-toggle-btn { background:transparent; border:1.5px solid var(--border); border-radius:8px; padding:5px 10px; cursor:pointer; font-size:14px; color:var(--text-sub); line-height:1; transition:border-color .2s; }
+    .theme-toggle-btn:hover { border-color:var(--blue); }
+  </style>
 </head>
 <body>
 
@@ -687,10 +699,13 @@
     <a class="logo" href="index.html">
       <img src="uploads/website_logo_transparent_background.png" alt="Zipree" style="height:48px;width:auto;display:block;" />
     </a>
-    <a class="back-link" href="index.html">
-      <svg viewBox="0 0 16 16"><line x1="13" y1="8" x2="3" y2="8"/><polyline points="7,4 3,8 7,12"/></svg>
-      Back to Home
-    </a>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <a class="back-link" href="index.html">
+        <svg viewBox="0 0 16 16"><line x1="13" y1="8" x2="3" y2="8"/><polyline points="7,4 3,8 7,12"/></svg>
+        Back to Home
+      </a>
+      <button class="theme-toggle-btn" id="themeToggle" title="Toggle dark mode">🌙</button>
+    </div>
   </header>
 
   <!-- Hero -->
@@ -1095,6 +1110,7 @@
     <p class="footer-disclaimer">Simple Portfolio Service (SPS) is a Collective2 signal provider, not a registered investment advisor (RIA), broker-dealer, or financial planner. Information presented is educational and reflects the strategy owner's personal trading methodology. It does not constitute personalized investment, legal, or tax advice. Trading involves substantial risk of loss and is not suitable for all investors. Leveraged ETFs carry additional risks, including amplified losses and decay in sideways markets. Past performance does not guarantee future results. All performance figures are sourced from Collective2 and reflect simulated and/or live trading results. Consult a qualified financial advisor before making investment decisions.<br/><br/>© 2026 Simple Portfolio Service. All rights reserved.</p>
   </footer>
 
+  <script src="theme.js"></script>
   <script>
     function toggleFaq(btn) {
       const item = btn.closest('.faq-item');

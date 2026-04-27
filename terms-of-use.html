@@ -62,16 +62,28 @@
     }
   </style>
   <link rel="icon" type="image/png" href="uploads/website_logo_transparent_background.png" />
+  <script>if(localStorage.getItem('sps-theme')==='dark')document.documentElement.classList.add('dark');</script>
+  <style>
+    html.dark body { --bg:#0f172a; --surface:#1e293b; --border:rgba(255,255,255,0.08); --text-main:#f1f5f9; --text-sub:#94a3b8; }
+    html.dark .page-top { background:#1e293b; border-color:rgba(255,255,255,0.08); }
+    html.dark .risk-box { background:rgba(88,166,255,0.08); border-color:rgba(88,166,255,0.2); }
+    html.dark footer { background:#1e293b; }
+    .theme-toggle-btn { background:transparent; border:1.5px solid var(--border); border-radius:8px; padding:5px 10px; cursor:pointer; font-size:14px; color:var(--text-sub); line-height:1; transition:border-color .2s; }
+    .theme-toggle-btn:hover { border-color:var(--blue); }
+  </style>
 </head>
 <body>
   <header>
     <a class="logo" href="index.html">
       <img src="uploads/website_logo_transparent_background.png" alt="Zipree" style="height:48px;width:auto;display:block;" />
     </a>
+    <div style="display:flex;align-items:center;gap:12px;">
     <a class="back-link" href="index.html">
       <svg viewBox="0 0 16 16"><line x1="13" y1="8" x2="3" y2="8"/><polyline points="7,4 3,8 7,12"/></svg>
       Back to Home
     </a>
+    <button class="theme-toggle-btn" id="themeToggle" title="Toggle dark mode">🌙</button>
+    </div>
   </header>
 
   <div class="page-top">
@@ -146,5 +158,6 @@
       <a href="https://twitter.com/SimplePortfoli1" target="_blank" rel="noopener">Twitter</a>
     </div>
   </footer>
+  <script src="theme.js"></script>
 </body>
 </html>

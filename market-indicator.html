@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Market Breadth Dashboard — Simple Portfolio Service</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/png" href="uploads/website_logo_transparent_background.png" />
+  <script src="https://unpkg.com/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
+  <script>if(localStorage.getItem('sps-theme')==='dark')document.documentElement.classList.add('dark');</script>
+  <style>
+    /* dark mode: market-indicator defaults dark, so we override for light */
+    html:not(.dark) #appBody { --bg:#f6f8fa; --card:#ffffff; --input:#f0f2f5; --border:#d0d7de; --border2:#d0d7de; --t1:#1f2328; --t2:#656d76; --t3:#8b949e; --t4:#8b949e; --hover:rgba(88,166,255,0.06); --blue:#0969da; --blue2:#0550ae; --green:#1a7f37; --red:#cf222e; --yellow:#9a6700; }
+  </style>
+  <style>
+    :root {
+      --bg:       #0a0e17;
+      --card:     #0d1117;
+      --input:    #161b22;
+      --border:   #1e2433;
+      --border2:  #30363d;
+      --t1:       #e1e4e8;
+      --t2:       #8b949e;
+      --t3:       #484f58;
+      --t4:       #6e7681;
+      --hover:    rgba(88,166,255,0.04);
+      --blue:     #58a6ff;
+      --blue2:    #79c0ff;
+      --green:    #7ee787;
+      --red:      #f85149;
+      --yellow:   #e3b341;
+    }
+    body.light {
+      --bg:      #f6f8fa; --card:  #ffffff; --input: #f0f2f5;
+      --border:  #d0d7de; --border2:#d0d7de;
+      --t1: #1f2328; --t2: #656d76; --t3: #8b949e; --t4: #8b949e;
+      --hover: rgba(88,166,255,0.06);
+      --blue: #0969da; --blue2: #0550ae;
+      --green: #1a7f37; --red: #cf222e; --yellow: #9a6700;
+    }
+    *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:var(--t1); min-height:100vh; transition:background .3s,color .3s; }
+
+    /* ── Header ── */
+    .hdr { display:flex; align-items:center; justify-content:space-between; padding:14px 32px; background:var(--card); border-bottom:1px solid var(--border); }
+    .hdr-right { display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+
+    .sig-badge { display:flex; align-items:center; gap:7px; padding:7px 14px; border-radius:8px; font-size:13px; font-weight:600; }
+    .sig-badge.risk-off { background:rgba(248,81,73,.15); border:1px solid rgba(248,81,73,.4); color:#f85149; }
+    .sig-badge.caution  { background:rgba(227,179,65,.15); border:1px solid rgba(227,179,65,.4); color:#e3b341; }
+    .sig-badge.risk-on  { background:rgba(126,231,135,.15);border:1px solid rgba(126,231,135,.4);color:#7ee787; }
+    .sig-dot { width:8px; height:8px; border-radius:50%; animation:pulse 2s infinite; }
+    .risk-off .sig-dot { background:#f85149; }
+    .caution  .sig-dot { background:#e3b341; }
+    .risk-on  .sig-dot { background:#7ee787; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
+
+    .clock { font-size:12px; color:var(--t2); text-align:center; line-height:1.5; }
+    .clock-lbl { font-size:10px; text-transform:uppercase; letter-spacing:.5px; color:var(--t3); }
+
+    .theme-btn { background:var(--input); border:1px solid var(--border2); border-radius:8px; padding:6px 10px; cursor:pointer; font-size:15px; color:var(--t2); transition:border-color .2s; }
+    .theme-btn:hover { border-color:var(--blue); }
+
+    /* ── Main ── */
+    .main { padding:24px 32px; }
+    .title-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:4px; }
+    .page-title { font-size:20px; font-weight:700; }
+    .page-sub { font-size:13px; color:var(--t2); margin-bottom:20px; display:flex; justify-content:space-between; align-items:center; }
+
+    .ticker-sel { background:var(--input); border:1px solid var(--border2); border-radius:6px; color:var(--t1); padding:4px 8px; font-size:12px; font-weight:600; font-family:inherit; cursor:pointer; outline:none; }
+    .ticker-sel:focus { border-color:var(--blue); }
+
+    /* Signal stat cards */
+    .stats-bar { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px; }
+    .stat-card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:14px 20px; }
+    .stat-lbl { font-size:11px; color:var(--t2); text-transform:uppercase; letter-spacing:.5px; margin-bottom:3px; }
+    .stat-val { font-size:18px; font-weight:700; }
+    .stat-val.neg { color:#f85149; } .stat-val.warn { color:#e3b341; } .stat-val.pos { color:#7ee787; }
+    .stat-since { font-size:11px; color:var(--t3); margin-left:6px; }
+
+    /* Chart grid */
+    .chart-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+    @media(max-width:1100px){ .chart-grid,.stats-bar{grid-template-columns:1fr;} }
+
+    .chart-panel { background:var(--card); border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+    .chart-hdr { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; border-bottom:1px solid var(--border); flex-wrap:wrap; gap:8px; }
+    .chart-title-area { display:flex; align-items:center; gap:10px; }
+    .chart-lbl { font-size:14px; font-weight:600; }
+    .chart-pill { font-size:10px; font-weight:600; padding:3px 9px; border-radius:12px; text-transform:uppercase; letter-spacing:.5px; }
+    .pill-risk-off { background:rgba(248,81,73,.2); color:#f85149; }
+    .pill-caution  { background:rgba(227,179,65,.2); color:#e3b341; }
+    .pill-risk-on  { background:rgba(126,231,135,.2);color:#7ee787; }
+    .chart-ticker  { font-size:12px; color:var(--t2); }
+
+    .range-btns { display:flex; gap:4px; }
+    .rbtn { background:transparent; border:1px solid var(--border2); color:var(--t2); padding:3px 9px; border-radius:6px; font-size:11px; font-family:inherit; cursor:pointer; transition:all .15s; }
+    .rbtn:hover { border-color:var(--blue); color:var(--blue); }
+    .rbtn.active { background:#1f6feb; border-color:#1f6feb; color:#fff; }
+
+    .chart-box { height:400px; padding:4px; }
+
+    .legend { display:flex; align-items:center; justify-content:center; gap:20px; padding:10px; border-top:1px solid var(--border); font-size:12px; color:var(--t2); }
+    .leg-item { display:flex; align-items:center; gap:6px; }
+    .leg-color { width:22px; height:11px; border-radius:2px; }
+    .leg-risk-on  { background:rgba(126,231,135,.12); border:1px solid rgba(126,231,135,.3); }
+    .leg-risk-off { background:rgba(248,81,73,.18);  border:1px solid rgba(248,81,73,.4); }
+    .leg-caution  { background:rgba(227,179,65,.15); border:1px solid rgba(227,179,65,.35); }
+
+    /* Internals */
+    .internals-section { margin-top:20px; }
+    .internals-panel { background:var(--card); border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+    .internals-box { height:340px; padding:4px; }
+    .int-legend { display:flex; align-items:center; justify-content:center; gap:24px; padding:10px; border-top:1px solid var(--border); font-size:12px; color:var(--t2); flex-wrap:wrap; }
+    .int-leg { display:flex; align-items:center; gap:6px; }
+    .int-swatch { width:20px; height:3px; border-radius:2px; }
+
+    /* Table */
+    .tbl-section { margin-top:24px; background:var(--card); border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+    .tbl-hdr { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; border-bottom:1px solid var(--border); flex-wrap:wrap; gap:8px; }
+    .tbl-title { font-size:14px; font-weight:600; }
+    .tbl-sub { font-size:12px; color:var(--t2); margin-left:10px; }
+    .tbl-controls { display:flex; gap:8px; align-items:center; }
+    .tbl-search { background:var(--input); border:1px solid var(--border2); border-radius:6px; color:var(--t1); padding:5px 10px; font-size:12px; width:150px; outline:none; font-family:inherit; }
+    .tbl-search:focus { border-color:var(--blue); }
+    .tbl-export { background:var(--input); border:1px solid var(--border2); border-radius:6px; color:var(--t2); padding:5px 10px; font-size:12px; cursor:pointer; font-family:inherit; transition:all .2s; }
+    .tbl-export:hover { border-color:var(--blue); color:var(--blue); }
+
+    .tbl-wrap { overflow-x:auto; }
+    .mkt-tbl { width:100%; border-collapse:collapse; font-size:12px; white-space:nowrap; }
+    .mkt-tbl thead { position:sticky; top:0; z-index:2; }
+    .mkt-tbl th { background:var(--input); color:var(--t2); font-weight:600; padding:9px 12px; text-align:center; border-bottom:2px solid var(--border); cursor:pointer; user-select:none; font-size:11px; line-height:1.3; font-family:inherit; }
+    .mkt-tbl th:hover { color:var(--t1); }
+    .mkt-tbl th.col-click { border-top:2px solid var(--blue); }
+    .th-sub { font-weight:400; color:var(--t4); font-size:10px; }
+    .mkt-tbl td { padding:7px 12px; text-align:center; border-bottom:1px solid var(--input); }
+    .mkt-tbl tbody tr:hover td { background:var(--hover); }
+    .mkt-tbl td.col-date { text-align:left; color:var(--t2); font-size:11px; }
+    .mkt-tbl td.clickable { color:var(--blue); cursor:pointer; text-decoration:underline; text-decoration-style:dotted; text-underline-offset:3px; }
+    .mkt-tbl td.clickable:hover { color:var(--blue2); background:rgba(88,166,255,.08); }
+    .bull { color:#7ee787 !important; font-weight:600; }
+    .bear { color:#f85149 !important; font-weight:600; }
+    .neut { color:#e3b341 !important; }
+    .t2h-hi { color:#7ee787 !important; } .t2h-lo { color:#f85149 !important; }
+    body.light .bull { color:#1a7f37 !important; } body.light .bear { color:#cf222e !important; }
+    body.light .t2h-hi { color:#1a7f37 !important; }
+
+    .tbl-footer { display:flex; align-items:center; justify-content:space-between; padding:10px 16px; border-top:1px solid var(--border); font-size:12px; color:var(--t2); flex-wrap:wrap; gap:8px; }
+    .pag { display:flex; align-items:center; gap:8px; }
+    .pag-btn { background:var(--input); border:1px solid var(--border2); border-radius:6px; color:var(--t2); padding:4px 10px; font-size:11px; cursor:pointer; font-family:inherit; }
+    .pag-btn:hover:not(:disabled) { border-color:var(--blue); color:var(--blue); }
+    .pag-btn:disabled { opacity:.4; cursor:default; }
+
+    /* Footer */
+    .footer { text-align:center; padding:20px; font-size:11px; color:var(--t3); border-top:1px solid var(--border); margin-top:32px; }
+    .footer a { color:var(--t2); text-decoration:none; margin:0 8px; }
+    .footer a:hover { color:var(--blue); }
+  </style>
+</head>
+<body id="appBody">
+
+  <!-- Header -->
+  <div class="hdr">
+    <a href="index.html" style="display:flex;align-items:center;text-decoration:none;">
+      <img src="uploads/website_logo_transparent_background.png" alt="SPS" style="height:44px;width:auto;" />
+    </a>
+    <div class="hdr-right">
+      <div class="sig-badge risk-off"><div class="sig-dot"></div>Short Term: RISK OFF</div>
+      <div class="sig-badge caution"><div class="sig-dot"></div>Long Term: CAUTION</div>
+      <div class="clock">
+        <div class="clock-lbl">Today's Date</div>
+        <span id="clockVal"></span>
+      </div>
+      <button class="theme-btn" id="themeToggle" title="Toggle theme">🌙</button>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="title-row">
+      <div class="page-title">Market Breadth Dashboard</div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:12px;font-weight:600;color:var(--t2);">Index:</span>
+        <div style="display:flex;background:var(--input);border:1px solid var(--border2);border-radius:8px;padding:3px;gap:2px;">
+          <button onclick="setTicker('SPY')" id="btnSPY" style="padding:5px 16px;border-radius:6px;border:none;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;background:#1f6feb;color:#fff;transition:all .15s;">SPY</button>
+          <button onclick="setTicker('QQQ')" id="btnQQQ" style="padding:5px 16px;border-radius:6px;border:none;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;background:transparent;color:var(--t2);transition:all .15s;">QQQ</button>
+        </div>
+      </div>
+    </div>
+    <div class="page-sub">
+      <span>Proprietary Market Risk On / Risk Off signals — Updates daily after market close</span>
+      <span style="color:var(--t3);font-size:11px;">Updated: Apr 26, 2026</span>
+    </div>
+
+    <!-- Signal stat cards -->
+    <div class="stats-bar">
+      <div class="stat-card">
+        <div class="stat-lbl">Short Term Signal</div>
+        <div><span class="stat-val neg">RISK OFF</span><span class="stat-since">· Since Mar 6, 2026</span></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-lbl">Long Term Signal</div>
+        <div><span class="stat-val warn">CAUTION</span><span class="stat-since">· Since Mar 6, 2026</span></div>
+      </div>
+    </div>
+
+    <!-- Chart Grid -->
+    <div class="chart-grid">
+      <!-- Short Term -->
+      <div class="chart-panel">
+        <div class="chart-hdr">
+          <div class="chart-title-area">
+            <span class="chart-lbl">Short Term Trend</span>
+            <span class="chart-pill pill-risk-off">Risk Off</span>
+            <span class="chart-ticker" id="shortLbl">SPY · Daily</span>
+          </div>
+          <div class="range-btns">
+            <button class="rbtn" data-chart="short" data-range="6m">6M</button>
+            <button class="rbtn active" data-chart="short" data-range="1y">1Y</button>
+            <button class="rbtn" data-chart="short" data-range="2y">2Y</button>
+            <button class="rbtn" data-chart="short" data-range="5y">5Y</button>
+            <button class="rbtn" data-chart="short" data-range="all">ALL</button>
+          </div>
+        </div>
+        <div class="chart-box" id="chart-short"></div>
+        <div class="legend">
+          <div class="leg-item"><div class="leg-color leg-risk-on"></div>Risk On</div>
+          <div class="leg-item"><div class="leg-color leg-risk-off"></div>Risk Off</div>
+        </div>
+      </div>
+
+      <!-- Long Term -->
+      <div class="chart-panel">
+        <div class="chart-hdr">
+          <div class="chart-title-area">
+            <span class="chart-lbl">Long Term Trend</span>
+            <span class="chart-pill pill-caution">Caution</span>
+            <span class="chart-ticker" id="longLbl">SPY · Weekly</span>
+          </div>
+          <div class="range-btns">
+            <button class="rbtn" data-chart="long" data-range="1y">1Y</button>
+            <button class="rbtn" data-chart="long" data-range="2y">2Y</button>
+            <button class="rbtn active" data-chart="long" data-range="5y">5Y</button>
+            <button class="rbtn" data-chart="long" data-range="10y">10Y</button>
+            <button class="rbtn" data-chart="long" data-range="all">ALL</button>
+          </div>
+        </div>
+        <div class="chart-box" id="chart-long"></div>
+        <div class="legend">
+          <div class="leg-item"><div class="leg-color leg-risk-on"></div>Risk On</div>
+          <div class="leg-item"><div class="leg-color leg-caution"></div>Caution</div>
+          <div class="leg-item"><div class="leg-color leg-risk-off"></div>Risk Off</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Market Internals -->
+    <div class="internals-section">
+      <div class="internals-panel">
+        <div class="chart-hdr">
+          <div class="chart-title-area">
+            <span class="chart-lbl">Market Internals</span>
+            <span class="chart-ticker" id="intLbl">SPY · Daily · 1 Year</span>
+          </div>
+        </div>
+        <div class="internals-box" id="chart-internals"></div>
+        <div class="int-legend">
+          <div class="int-leg"><div class="int-swatch" style="background:#58a6ff"></div><span id="intPriceLbl">SPY Price (Right Axis)</span></div>
+          <div class="int-leg"><div class="int-swatch" style="background:#e3b341"></div>RSI 18 (Left Axis)</div>
+          <div class="int-leg"><div class="int-swatch" style="background:#f97583"></div>T2108 (Left Axis)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Market Monitor Table -->
+    <div class="tbl-section">
+      <div class="tbl-hdr">
+        <div>
+          <span class="tbl-title">Market Monitor</span>
+          <span class="tbl-sub">Rolling 365-day daily breadth data</span>
+        </div>
+        <div class="tbl-controls">
+          <input class="tbl-search" type="text" id="tblSearch" placeholder="Filter by date…" />
+          <button class="tbl-export" id="exportBtn">⬇ CSV</button>
+        </div>
+      </div>
+      <div class="tbl-wrap">
+        <table class="mkt-tbl" id="mktTbl">
+          <thead>
+            <tr>
+              <th class="col-date" data-col="0">Date</th>
+              <th class="col-click" data-col="1">4% Breakout<br><span class="th-sub">(Up)</span></th>
+              <th class="col-click" data-col="2">4% Breakdown<br><span class="th-sub">(Down)</span></th>
+              <th data-col="3">5-Day<br><span class="th-sub">Ratio</span></th>
+              <th data-col="4">10-Day<br><span class="th-sub">Ratio</span></th>
+              <th class="col-click" data-col="5">25% Breakout<br><span class="th-sub">(1 Month)</span></th>
+              <th class="col-click" data-col="6">25% Breakdown<br><span class="th-sub">(1 Month)</span></th>
+              <th data-col="7">T2108<br><span class="th-sub">(TC2000)</span></th>
+              <th data-col="8">Universe<br><span class="th-sub">(Count)</span></th>
+              <th data-col="9">SPY<br><span class="th-sub">(Close)</span></th>
+            </tr>
+          </thead>
+          <tbody id="tblBody"></tbody>
+        </table>
+      </div>
+      <div class="tbl-footer">
+        <span id="tblCount">Showing 0 rows</span>
+        <div class="pag">
+          <button class="pag-btn" id="prevPg" disabled>« Prev</button>
+          <span id="pgInfo">Page 1</span>
+          <button class="pag-btn" id="nextPg">Next »</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    Simple Portfolio Service — Signals are for informational purposes only, not financial advice.
+    <br>Data updates daily around 5 PM ET after market close.
+    <br style="margin-bottom:6px"/>
+    <a href="index.html">Home</a>
+    <a href="investment-strategies.html">Strategies</a>
+    <a href="privacy-policy.html">Privacy Policy</a>
+    <a href="terms-of-use.html">Terms of Use</a>
+  </div>
+
+<script>
+// ── Live Clock ──────────────────────────────────────────────
+function tick() {
+  const n = new Date();
+  document.getElementById('clockVal').textContent =
+    n.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}) + ' ' +
+    n.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true});
+}
+tick(); setInterval(tick, 1000);
+
+// ── Theme (wired to shared theme.js) ────────────────────────
+function chartTheme() {
+  const dark = localStorage.getItem('sps-theme') !== 'light';
+  return dark
+    ? { bg:'#0d1117', text:'#8b949e', grid:'#161b22', border:'#1e2433', cross:'#30363d', lbl:'#1f2937' }
+    : { bg:'#ffffff', text:'#656d76', grid:'#eaeef2', border:'#d0d7de', cross:'#c9d1d9', lbl:'#e1e4e8' };
+}
+function applyTheme(chart) {
+  const t = chartTheme();
+  chart.applyOptions({
+    layout:{ background:{color:t.bg}, textColor:t.text },
+    grid:{ vertLines:{color:t.grid}, horzLines:{color:t.grid} },
+    rightPriceScale:{ borderColor:t.border },
+    timeScale:{ borderColor:t.border },
+    crosshair:{ vertLine:{color:t.cross,labelBackgroundColor:t.lbl}, horzLine:{color:t.cross,labelBackgroundColor:t.lbl} },
+  });
+}
+// Called by theme.js after toggle
+window.__onThemeChange = function(dark) {
+  document.getElementById('appBody').classList.toggle('light', !dark);
+  // charts not yet created — guard
+  if(typeof shortChart !== 'undefined') [shortChart, longChart, intChart].forEach(applyTheme);
+};
+
+// ── Risk signal dates ────────────────────────────────────────
+const riskOffRaw = [
+  "4/5/2024","4/19/2024","4/30/2024","5/2/2024",
+  "7/19/2024","8/15/2024","11/1/2024","11/7/2024",
+  "12/23/2024","1/20/2025","3/4/2025","5/1/2025",
+  "8/1/2025","8/7/2025","10/10/2025","11/27/2025",
+  "1/30/2026","2/26/2026","3/6/2026","5/8/2026"
+];
+// Expand ranges from the mockup
+const riskOffExpanded = [
+  ["4/5/2024","5/2/2024"],["7/19/2024","8/15/2024"],["11/1/2024","11/7/2024"],
+  ["12/23/2024","1/20/2025"],["3/4/2025","5/1/2025"],["8/1/2025","8/7/2025"],
+  ["10/10/2025","11/27/2025"],["1/30/2026","2/26/2026"],["3/6/2026","5/8/2026"]
+];
+function toISO(s){ const p=s.split('/'); return `${p[2]}-${p[0].padStart(2,'0')}-${p[1].padStart(2,'0')}`; }
+const shortOffSet = new Set();
+riskOffExpanded.forEach(([a,b])=>{
+  const s=new Date(toISO(a)), e=new Date(toISO(b)), c=new Date(s);
+  while(c<=e){ shortOffSet.add(c.toISOString().split('T')[0]); c.setDate(c.getDate()+1); }
+});
+
+const ltSignals = {};
+(function(){
+  const s=new Date('2016-01-01'), e=new Date('2026-12-31'), c=new Date(s);
+  while(c<=e){
+    const y=c.getFullYear(), m=c.getMonth()+1;
+    let st='risk_on';
+    if((y===2026&&m>=3)||(y===2025&&(m>=3&&m<=5))) st='risk_off';
+    else if((y===2026&&(m===1||m===2))||(y===2025&&(m===1||m===2||m===8||m===9||m===10||m===11))||
+            (y===2024&&(m===4||m===5||m===11||m===12))) st='caution';
+    ltSignals[c.toISOString().split('T')[0]]=st;
+    c.setDate(c.getDate()+1);
+  }
+})();
+
+const TODAY = '2026-04-26';
+
+// ── Generate price data ──────────────────────────────────────
+function genDaily(start, end) {
+  const data=[], s=new Date(start), e=new Date(end), c=new Date(s);
+  let price=380;
+  while(c<=e){
+    const dow=c.getDay();
+    if(dow!==0&&dow!==6){
+      const dt=c.toISOString().split('T')[0];
+      const off=shortOffSet.has(dt);
+      const drift=off?-0.0003:0.0005, vol=off?0.014:0.008;
+      const chg=drift+(Math.random()-.5)*vol;
+      const o=price, cl=price*(1+chg);
+      const hi=Math.max(o,cl)*(1+Math.random()*.005);
+      const lo=Math.min(o,cl)*(1-Math.random()*.005);
+      data.push({time:dt,open:+o.toFixed(2),high:+hi.toFixed(2),low:+lo.toFixed(2),close:+cl.toFixed(2)});
+      price=cl;
+    }
+    c.setDate(c.getDate()+1);
+  }
+  return data;
+}
+
+function toWeekly(daily){
+  const weeks=[]; let ws=null,o,h,l,cl;
+  for(const d of daily){
+    const dow=new Date(d.time).getDay();
+    if(ws===null||dow===1){
+      if(ws!==null) weeks.push({time:ws,open:o,high:h,low:l,close:cl});
+      ws=d.time; o=d.open; h=d.high; l=d.low; cl=d.close;
+    } else { h=Math.max(h,d.high); l=Math.min(l,d.low); cl=d.close; }
+  }
+  if(ws!==null) weeks.push({time:ws,open:o,high:h,low:l,close:cl});
+  return weeks;
+}
+
+function computeRSI(data, period=18){
+  const out=[]; let ag=0,al=0;
+  for(let i=1;i<=period;i++){const d=data[i].close-data[i-1].close; d>0?ag+=d:al+=Math.abs(d);}
+  ag/=period; al/=period;
+  let rs=al===0?100:ag/al;
+  out.push({time:data[period].time,value:+(100-100/(1+rs)).toFixed(2)});
+  for(let i=period+1;i<data.length;i++){
+    const d=data[i].close-data[i-1].close, g=d>0?d:0, ls=d<0?Math.abs(d):0;
+    ag=(ag*(period-1)+g)/period; al=(al*(period-1)+ls)/period;
+    rs=al===0?100:ag/al;
+    out.push({time:data[i].time,value:+(100-100/(1+rs)).toFixed(2)});
+  }
+  return out;
+}
+
+function genT2108(data){
+  return data.map(d=>{
+    const off=shortOffSet.has(d.time);
+    return {time:d.time,value:+Math.max(5,Math.min(95,(off?25:60)+(Math.random()-.5)*30)).toFixed(2)};
+  });
+}
+
+const daily = genDaily('2016-01-01', TODAY);
+const weekly = toWeekly(daily);
+
+// ── Create chart base ────────────────────────────────────────
+function makeChart(id, extra={}) {
+  const el=document.getElementById(id), t=chartTheme();
+  const chart=LightweightCharts.createChart(el,{
+    layout:{background:{color:t.bg},textColor:t.text,fontSize:11},
+    grid:{vertLines:{color:t.grid},horzLines:{color:t.grid}},
+    crosshair:{mode:LightweightCharts.CrosshairMode.Normal,
+      vertLine:{color:t.cross,width:1,style:2,labelBackgroundColor:t.lbl},
+      horzLine:{color:t.cross,width:1,style:2,labelBackgroundColor:t.lbl}},
+    rightPriceScale:{borderColor:t.border,scaleMargins:{top:.08,bottom:.08}},
+    timeScale:{borderColor:t.border,timeVisible:false,rightOffset:5},
+    handleScroll:{vertTouchDrag:false},
+    ...extra
+  });
+  new ResizeObserver(()=>chart.applyOptions({width:el.clientWidth,height:el.clientHeight})).observe(el);
+  return chart;
+}
+
+function setRange(chart, range){
+  const now=new Date(TODAY); let from;
+  switch(range){
+    case '6m': from=new Date(now); from.setMonth(from.getMonth()-6); break;
+    case '1y': from=new Date(now); from.setFullYear(now.getFullYear()-1); break;
+    case '2y': from=new Date(now); from.setFullYear(now.getFullYear()-2); break;
+    case '5y': from=new Date(now); from.setFullYear(now.getFullYear()-5); break;
+    case '10y':from=new Date(now); from.setFullYear(now.getFullYear()-10); break;
+    case 'all':chart.timeScale().fitContent(); return;
+  }
+  chart.timeScale().setVisibleRange({from:from.toISOString().split('T')[0],to:TODAY});
+}
+
+const C={
+  s_on:'rgba(126,231,135,0.06)', s_off:'rgba(248,81,73,0.12)',
+  l_on:'rgba(126,231,135,0.06)', l_cau:'rgba(227,179,65,0.10)', l_off:'rgba(248,81,73,0.12)',
+  a_on:'#7ee787', a_cau:'#e3b341', a_off:'#f85149'
+};
+
+function addShortOverlay(chart, priceData){
+  const markers=[]; let prev=null;
+  const bgData=priceData.map(d=>{
+    const off=shortOffSet.has(d.time), sig=off?'off':'on';
+    if(prev!==null&&prev!==sig) markers.push({time:d.time,
+      position:sig==='off'?'aboveBar':'belowBar',
+      color:sig==='off'?C.a_off:C.a_on,
+      shape:sig==='off'?'arrowDown':'arrowUp',
+      text:sig==='off'?'Risk Off':'Risk On', size:1.5});
+    prev=sig;
+    return {time:d.time,value:1,color:off?C.s_off:C.s_on};
+  });
+  const bg=chart.addHistogramSeries({priceScaleId:'bg',base:0,priceFormat:{type:'custom',formatter:()=>''},lastValueVisible:false,priceLineVisible:false});
+  chart.priceScale('bg').applyOptions({scaleMargins:{top:0,bottom:0},visible:false});
+  bg.setData(bgData);
+  window._shortBgSeries=bg; window._shortBgData=bgData; window._shortOffSet=shortOffSet;
+  return markers;
+}
+
+function addLongOverlay(chart, priceData){
+  const markers=[]; let prev=null;
+  const bgData=priceData.map(d=>{
+    const sig=ltSignals[d.time]||'risk_on';
+    if(prev!==null&&prev!==sig){
+      const off=sig==='risk_off',cau=sig==='caution';
+      markers.push({time:d.time,position:off||cau?'aboveBar':'belowBar',
+        color:off?C.a_off:cau?C.a_cau:C.a_on,
+        shape:off||cau?'arrowDown':'arrowUp',
+        text:off?'Risk Off':cau?'Caution':'Risk On',size:1.5});
+    }
+    prev=sig;
+    return {time:d.time,value:1,color:sig==='risk_off'?C.l_off:sig==='caution'?C.l_cau:C.l_on};
+  });
+  const bg=chart.addHistogramSeries({priceScaleId:'bg',base:0,priceFormat:{type:'custom',formatter:()=>''},lastValueVisible:false,priceLineVisible:false});
+  chart.priceScale('bg').applyOptions({scaleMargins:{top:0,bottom:0},visible:false});
+  bg.setData(bgData);
+  window._longBgSeries=bg; window._longBgData=bgData; window._ltSignals=ltSignals;
+  return markers;
+}
+
+// ── Short Term Chart ─────────────────────────────────────────
+const shortChart=makeChart('chart-short');
+const shortMarkers=addShortOverlay(shortChart,daily);
+const shortCandles=shortChart.addCandlestickSeries({upColor:'#7ee787',downColor:'#f85149',borderUpColor:'#7ee787',borderDownColor:'#f85149',wickUpColor:'#7ee787',wickDownColor:'#f85149'});
+shortCandles.setData(daily); shortCandles.setMarkers(shortMarkers);
+setRange(shortChart,'1y');
+window._shortChart=shortChart; window._shortSeries=shortCandles; window._shortData=daily;
+
+// ── Long Term Chart ──────────────────────────────────────────
+const longChart=makeChart('chart-long');
+const longMarkers=addLongOverlay(longChart,weekly);
+const longCandles=longChart.addCandlestickSeries({upColor:'#7ee787',downColor:'#f85149',borderUpColor:'#7ee787',borderDownColor:'#f85149',wickUpColor:'#7ee787',wickDownColor:'#f85149'});
+longCandles.setData(weekly); longCandles.setMarkers(longMarkers);
+setRange(longChart,'5y');
+window._longChart=longChart; window._longSeries=longCandles; window._longData=weekly;
+
+// ── Range buttons ────────────────────────────────────────────
+document.querySelectorAll('.rbtn').forEach(btn=>{
+  btn.addEventListener('click',e=>{
+    const ch=e.target.dataset.chart, rng=e.target.dataset.range;
+    document.querySelectorAll(`.rbtn[data-chart="${ch}"]`).forEach(b=>b.classList.remove('active'));
+    e.target.classList.add('active');
+    setRange(ch==='short'?shortChart:longChart, rng);
+  });
+});
+
+// ── Market Internals Chart ────────────────────────────────────
+const intChart=makeChart('chart-internals',{
+  rightPriceScale:{borderColor:chartTheme().border,scaleMargins:{top:.05,bottom:.05}},
+  leftPriceScale:{visible:true,borderColor:chartTheme().border,scaleMargins:{top:.05,bottom:.05}},
+});
+const oneYrAgo=new Date(TODAY); oneYrAgo.setFullYear(oneYrAgo.getFullYear()-1);
+const intDaily=daily.filter(d=>new Date(d.time)>=oneYrAgo);
+
+const priceSeries=intChart.addLineSeries({color:'#58a6ff',lineWidth:2.5,priceScaleId:'right',lastValueVisible:true,priceLineVisible:false,title:'Price'});
+priceSeries.setData(intDaily.map(d=>({time:d.time,value:d.close})));
+
+const rsiAll=computeRSI(daily,18);
+const rsi1y=rsiAll.filter(d=>new Date(d.time)>=oneYrAgo);
+const rsiSeries=intChart.addLineSeries({color:'#e3b341',lineWidth:1.8,priceScaleId:'left',lastValueVisible:true,priceLineVisible:false,title:'RSI'});
+rsiSeries.setData(rsi1y);
+
+const t2108All=genT2108(daily);
+const t2108_1y=t2108All.filter(d=>new Date(d.time)>=oneYrAgo);
+const t2108Series=intChart.addLineSeries({color:'#f97583',lineWidth:1.8,priceScaleId:'left',lastValueVisible:true,priceLineVisible:false,title:'T2108'});
+t2108Series.setData(t2108_1y);
+
+// ── Ticker toggle ─────────────────────────────────────────────
+function setTicker(tk) {
+  document.getElementById('shortLbl').textContent=`${tk} · Daily`;
+  document.getElementById('longLbl').textContent=`${tk} · Weekly`;
+  document.getElementById('intLbl').textContent=`${tk} · Daily · 1 Year`;
+  document.getElementById('intPriceLbl').textContent=`${tk} Price (Right Axis)`;
+  ['SPY','QQQ'].forEach(t => {
+    const btn = document.getElementById('btn'+t);
+    const active = t === tk;
+    btn.style.background = active ? '#1f6feb' : 'transparent';
+    btn.style.color = active ? '#fff' : 'var(--t2)';
+  });
+}
+
+// ── Breadth table data ────────────────────────────────────────
+function buildTableData(){
+  const rows=[];
+  for(let i=daily.length-1;i>=Math.max(0,daily.length-365);i--){
+    const d=daily[i];
+    const up4=Math.round(25+Math.random()*140), dn4=Math.round(15+Math.random()*110);
+    rows.push({
+      date:new Date(d.time).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),
+      up4, dn4,
+      r5:+(up4/Math.max(dn4,1)).toFixed(2),
+      r10:+((up4*.88)/Math.max(dn4*1.12,1)).toFixed(2),
+      up25:Math.round(8+Math.random()*70),
+      dn25:Math.round(5+Math.random()*55),
+      t2108:Math.max(4,Math.min(96,Math.round(48+(Math.random()-.5)*60))),
+      uni:Math.round(1880+Math.random()*220),
+      spy:d.close.toFixed(2)
+    });
+  }
+  return rows;
+}
+const ALL_ROWS=buildTableData();
+
+let filtered=ALL_ROWS.slice(), sortCol=0, sortDir=-1, page=0;
+const PER_PAGE=25;
+
+function ratio(v){ return v>=1.5?'bull':v<0.75?'bear':'neut'; }
+function t2108cls(v){ return v>60?'t2h-hi':v<25?'t2h-lo':''; }
+
+function renderTable(){
+  const body=document.getElementById('tblBody');
+  const start=page*PER_PAGE, slice=filtered.slice(start,start+PER_PAGE);
+  body.innerHTML=slice.map(r=>`
+    <tr>
+      <td class="col-date">${r.date}</td>
+      <td class="clickable">${r.up4}</td>
+      <td class="clickable">${r.dn4}</td>
+      <td class="${ratio(r.r5)}">${r.r5}</td>
+      <td class="${ratio(r.r10)}">${r.r10}</td>
+      <td class="clickable">${r.up25}</td>
+      <td class="clickable">${r.dn25}</td>
+      <td class="${t2108cls(r.t2108)}">${r.t2108}%</td>
+      <td>${r.uni.toLocaleString()}</td>
+      <td style="font-weight:600">$${r.spy}</td>
+    </tr>`).join('');
+  const total=filtered.length, pages=Math.ceil(total/PER_PAGE);
+  document.getElementById('tblCount').textContent=`Showing ${start+1}–${Math.min(start+PER_PAGE,total)} of ${total} rows`;
+  document.getElementById('pgInfo').textContent=`Page ${page+1} of ${pages}`;
+  document.getElementById('prevPg').disabled=page===0;
+  document.getElementById('nextPg').disabled=page>=pages-1;
+}
+
+document.getElementById('tblSearch').addEventListener('input',e=>{
+  const q=e.target.value.toLowerCase();
+  filtered=ALL_ROWS.filter(r=>r.date.toLowerCase().includes(q));
+  page=0; renderTable();
+});
+document.getElementById('prevPg').addEventListener('click',()=>{page--;renderTable();});
+document.getElementById('nextPg').addEventListener('click',()=>{page++;renderTable();});
+
+document.querySelectorAll('#mktTbl th').forEach(th=>{
+  th.addEventListener('click',()=>{
+    const col=+th.dataset.col;
+    if(sortCol===col) sortDir*=-1; else{sortCol=col;sortDir=-1;}
+    const keys=['date','up4','dn4','r5','r10','up25','dn25','t2108','uni','spy'];
+    filtered.sort((a,b)=>{ const k=keys[col]; return String(a[k]).localeCompare(String(b[k]),undefined,{numeric:true})*sortDir; });
+    page=0; renderTable();
+  });
+});
+
+document.getElementById('exportBtn').addEventListener('click',()=>{
+  const hdr='Date,4% Up,4% Down,5-Day Ratio,10-Day Ratio,25% Up,25% Down,T2108,Universe,SPY Close';
+  const lines=[hdr,...ALL_ROWS.map(r=>[r.date,r.up4,r.dn4,r.r5,r.r10,r.up25,r.dn25,r.t2108,r.uni,r.spy].join(','))];
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([lines.join('\n')],{type:'text/csv'}));
+  a.download='market-breadth.csv'; a.click();
+});
+
+renderTable();
+</script>
+
+<!-- ── Tweaks Panel ─────────────────────────────────────────── -->
+<style>
+  .twk { position:fixed; right:16px; bottom:16px; z-index:9999; width:264px;
+    background:rgba(13,17,23,0.92); backdrop-filter:blur(20px) saturate(160%);
+    border:1px solid rgba(255,255,255,0.12); border-radius:14px;
+    box-shadow:0 12px 40px rgba(0,0,0,0.5); font-family:'Plus Jakarta Sans',sans-serif;
+    color:#e1e4e8; overflow:hidden; display:none; }
+  body:not(.dark) .twk, html:not(.dark) .twk { background:rgba(255,255,255,0.94); color:#1f2328; border-color:rgba(0,0,0,0.1); box-shadow:0 12px 40px rgba(0,0,0,0.15); }
+  .twk-hd { display:flex; align-items:center; justify-content:space-between; padding:12px 14px; cursor:move; user-select:none; border-bottom:1px solid rgba(255,255,255,0.08); }
+  body:not(.dark) .twk-hd, html:not(.dark) .twk-hd { border-color:rgba(0,0,0,0.08); }
+  .twk-hd b { font-size:12px; font-weight:700; letter-spacing:.02em; }
+  .twk-x { background:none; border:none; color:inherit; opacity:.5; font-size:16px; cursor:pointer; padding:0 2px; line-height:1; }
+  .twk-x:hover { opacity:1; }
+  .twk-body { padding:14px; display:flex; flex-direction:column; gap:16px; }
+  .twk-section { font-size:10px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; opacity:.45; margin-bottom:-8px; }
+  .twk-row { display:flex; flex-direction:column; gap:6px; }
+  .twk-lbl { font-size:12px; font-weight:600; opacity:.75; }
+  .seg { display:flex; background:rgba(255,255,255,0.07); border-radius:8px; padding:3px; gap:2px; }
+  html:not(.dark) .seg { background:rgba(0,0,0,0.06); }
+  .seg-btn { flex:1; padding:6px 4px; border:none; background:transparent; border-radius:6px;
+    font-size:11px; font-weight:600; font-family:inherit; color:inherit; opacity:.55;
+    cursor:pointer; transition:all .15s; text-align:center; }
+  .seg-btn.on { background:#1f6feb; color:#fff; opacity:1; }
+  html:not(.dark) .seg-btn.on { background:#0969da; }
+</style>
+
+<div class="twk" id="twkPanel">
+  <div class="twk-hd" id="twkDrag">
+    <b>Tweaks</b>
+    <button class="twk-x" id="twkClose">✕</button>
+  </div>
+  <div class="twk-body">
+    <div class="twk-row">
+      <div class="twk-section">Chart Style</div>
+      <div class="twk-lbl">Price Chart Type</div>
+      <div class="seg" id="segStyle">
+        <button class="seg-btn on" data-val="candles">Candles</button>
+        <button class="seg-btn" data-val="line">Line</button>
+        <button class="seg-btn" data-val="area">Area</button>
+      </div>
+    </div>
+    <div class="twk-row">
+      <div class="twk-section">Signal Zones</div>
+      <div class="twk-lbl">Risk Shading Intensity</div>
+      <div class="seg" id="segShading">
+        <button class="seg-btn" data-val="subtle">Subtle</button>
+        <button class="seg-btn on" data-val="standard">Standard</button>
+        <button class="seg-btn" data-val="bold">Bold</button>
+      </div>
+    </div>
+    <div class="twk-row">
+      <div class="twk-section">Table</div>
+      <div class="twk-lbl">Row Density</div>
+      <div class="seg" id="segDensity">
+        <button class="seg-btn" data-val="compact">Compact</button>
+        <button class="seg-btn on" data-val="comfortable">Comfortable</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  // ── Protocol ──────────────────────────────────────────────
+  const panel = document.getElementById('twkPanel');
+  window.addEventListener('message', e => {
+    if(e.data?.type === '__activate_edit_mode')   { panel.style.display='block'; }
+    if(e.data?.type === '__deactivate_edit_mode') { panel.style.display='none'; }
+  });
+  setTimeout(() => window.parent.postMessage({type:'__edit_mode_available'},'*'), 100);
+
+  document.getElementById('twkClose').addEventListener('click', () => {
+    panel.style.display='none';
+    window.parent.postMessage({type:'__edit_mode_dismissed'},'*');
+  });
+
+  // ── Drag ────────────────────────────────────────────────────
+  const drag = document.getElementById('twkDrag');
+  let ox=0,oy=0,dragging=false;
+  drag.addEventListener('mousedown', e=>{dragging=true;ox=e.clientX-panel.offsetLeft;oy=e.clientY-panel.offsetTop;});
+  document.addEventListener('mousemove', e=>{if(!dragging)return; panel.style.right='auto'; panel.style.bottom='auto'; panel.style.left=(e.clientX-ox)+'px'; panel.style.top=(e.clientY-oy)+'px';});
+  document.addEventListener('mouseup',()=>dragging=false);
+
+  // ── Seg helper ───────────────────────────────────────────────
+  function bindSeg(id, cb) {
+    const seg = document.getElementById(id);
+    seg.querySelectorAll('.seg-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        seg.querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('on'));
+        btn.classList.add('on');
+        cb(btn.dataset.val);
+      });
+    });
+  }
+
+  // ── 1. Chart Style ──────────────────────────────────────────
+  // Store data and series refs
+  let curStyle = 'candles';
+  let shortSeries = window._shortSeries, longSeries = window._longSeries;
+
+  function applyChartStyle(style) {
+    curStyle = style;
+    [
+      {chart: window._shortChart, data: window._shortData, seriesKey: '_shortSeries'},
+      {chart: window._longChart,  data: window._longData,  seriesKey: '_longSeries'},
+    ].forEach(({chart, data, seriesKey}) => {
+      if(!chart || !data) return;
+      try { chart.removeSeries(window[seriesKey]); } catch(_){}
+      let s;
+      if(style==='candles') {
+        s = chart.addCandlestickSeries({upColor:'#7ee787',downColor:'#f85149',borderUpColor:'#7ee787',borderDownColor:'#f85149',wickUpColor:'#7ee787',wickDownColor:'#f85149'});
+        s.setData(data);
+      } else if(style==='line') {
+        s = chart.addLineSeries({color:'#58a6ff',lineWidth:2,lastValueVisible:true,priceLineVisible:false});
+        s.setData(data.map(d=>({time:d.time,value:d.close})));
+      } else {
+        s = chart.addAreaSeries({topColor:'rgba(88,166,255,0.25)',bottomColor:'rgba(88,166,255,0.02)',lineColor:'#58a6ff',lineWidth:2,lastValueVisible:true,priceLineVisible:false});
+        s.setData(data.map(d=>({time:d.time,value:d.close})));
+      }
+      window[seriesKey] = s;
+    });
+  }
+
+  bindSeg('segStyle', applyChartStyle);
+
+  // ── 2. Signal Shading ───────────────────────────────────────
+  const SHADE = {
+    subtle:   { s_off:'rgba(248,81,73,0.05)',  s_on:'rgba(126,231,135,0.03)', l_off:'rgba(248,81,73,0.05)',  l_cau:'rgba(227,179,65,0.04)', l_on:'rgba(126,231,135,0.03)' },
+    standard: { s_off:'rgba(248,81,73,0.12)',  s_on:'rgba(126,231,135,0.06)', l_off:'rgba(248,81,73,0.12)',  l_cau:'rgba(227,179,65,0.10)', l_on:'rgba(126,231,135,0.06)' },
+    bold:     { s_off:'rgba(248,81,73,0.28)',  s_on:'rgba(126,231,135,0.14)', l_off:'rgba(248,81,73,0.28)',  l_cau:'rgba(227,179,65,0.22)', l_on:'rgba(126,231,135,0.14)' },
+  };
+
+  function applyShading(level) {
+    const sh = SHADE[level];
+    if(!window._shortBgSeries || !window._longBgSeries) return;
+    // Rebuild bg series data with new colors
+    const newShort = (window._shortBgData||[]).map(d=>({...d, color: window._shortOffSet?.has(d.time) ? sh.s_off : sh.s_on }));
+    const newLong  = (window._longBgData||[]).map(d=>{
+      const sig = window._ltSignals?.[d.time]||'risk_on';
+      return {...d, color: sig==='risk_off'?sh.l_off:sig==='caution'?sh.l_cau:sh.l_on};
+    });
+    try { window._shortBgSeries.setData(newShort); } catch(_){}
+    try { window._longBgSeries.setData(newLong);   } catch(_){}
+  }
+
+  bindSeg('segShading', applyShading);
+
+  // ── 3. Table Density ────────────────────────────────────────
+  const densityStyle = document.createElement('style');
+  document.head.appendChild(densityStyle);
+
+  function applyDensity(d) {
+    densityStyle.textContent = d === 'compact'
+      ? '.mkt-tbl td,.mkt-tbl th{padding:4px 12px!important;font-size:11px!important;}'
+      : '.mkt-tbl td,.mkt-tbl th{padding:7px 12px;font-size:12px;}';
+  }
+
+  bindSeg('segDensity', applyDensity);
+})();
+</script>
+<script src="theme.js"></script>
+</body>
+</html>

@@ -7,6 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script>if(localStorage.getItem('sps-theme')==='dark')document.documentElement.classList.add('dark');</script>
 
   <style>
     *, *::before, *::after {
@@ -24,8 +25,13 @@
       --green:     oklch(52% 0.18 240);
       --green-mid: oklch(64% 0.16 240);
       --green-light: oklch(94% 0.05 240);
-      --green-glow: oklch(52% 0.18 240 / 0.12);
+        --green-glow: oklch(52% 0.18 240 / 0.12);
     }
+    html.dark body { --bg:#0f172a; --surface:#1e293b; --border:rgba(255,255,255,0.08); --text-main:#f1f5f9; --text-sub:#94a3b8; --green-light:rgba(88,166,255,0.1); }
+    html.dark .nav-card { background:#1e293b; border-color:rgba(255,255,255,0.08); }
+    html.dark footer { background:#1e293b; border-color:rgba(255,255,255,0.08); }
+    .theme-toggle-btn { background:transparent; border:1.5px solid var(--border); border-radius:8px; padding:5px 10px; cursor:pointer; font-size:14px; color:var(--text-sub); line-height:1; transition:border-color .2s; }
+    .theme-toggle-btn:hover { border-color:var(--green); }
 
     html, body {
       height: 100%;
@@ -415,6 +421,7 @@
       <a href="investment-strategies.html">Investments</a>
       <a href="market-indicators.html">Indicators</a>
       <a href="fastrek.html">Board Game</a>
+      <button class="theme-toggle-btn" id="themeToggle" title="Toggle dark mode" style="margin-left:32px;">🌙</button>
     </nav>
   </header>
 
@@ -452,7 +459,7 @@
       </a>
 
       <!-- Market Indicators -->
-      <a class="nav-card" href="market-indicators.html">
+      <a class="nav-card" href="market-indicator.html">
         <div>
           <div class="card-icon">
             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -461,7 +468,6 @@
           </div>
           <div class="card-title">Market Indicators</div>
           <div class="card-desc">Key signals and data points to help retail investors read the market with clarity and confidence.</div>
-          <div class="coming-soon">Coming Soon</div>
         </div>
         <div class="card-arrow">
           <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
@@ -505,5 +511,6 @@
     </div>
   </footer>
 
+  <script src="theme.js"></script>
 </body>
 </html>
