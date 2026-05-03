@@ -166,8 +166,8 @@
       <img src="uploads/website_logo_transparent_background.png" alt="SPS" style="height:44px;width:auto;" />
     </a>
     <div class="hdr-right">
-      <div class="sig-badge risk-off"><div class="sig-dot"></div>Short Term: RISK OFF</div>
-      <div class="sig-badge caution"><div class="sig-dot"></div>Long Term: CAUTION</div>
+      <div class="sig-badge risk-on"><div class="sig-dot"></div>Short Term: RISK ON</div>
+      <div class="sig-badge risk-on"><div class="sig-dot"></div>Long Term: RISK ON</div>
       <div class="clock">
         <div class="clock-lbl">Today's Date</div>
         <span id="clockVal"></span>
@@ -175,6 +175,39 @@
       <button class="theme-btn" id="themeToggle" title="Toggle theme">🌙</button>
     </div>
   </div>
+
+  <!-- WIP Status Banner -->
+  <div id="wipBanner" style="
+    display:flex; align-items:center; justify-content:space-between;
+    gap:12px; padding:10px 32px;
+    background:rgba(227,179,65,0.08);
+    border-bottom:1px solid rgba(227,179,65,0.25);
+    font-family:'Plus Jakarta Sans',sans-serif;
+  ">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+      <span style="
+        font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+        background:rgba(227,179,65,0.18);border:1px solid rgba(227,179,65,0.4);
+        color:#e3b341;padding:3px 8px;border-radius:5px;white-space:nowrap;
+      ">Work in Progress</span>
+      <span style="font-size:13px;color:var(--t2);">
+        This page is under active development — data is <strong style="color:var(--t1);font-weight:600;">not updating daily</strong> yet. Last update: <span id="wipLastDate" style="color:var(--t1);font-weight:600;">Apr 26, 2026</span>.
+      </span>
+    </div>
+    <button onclick="
+      document.getElementById('wipBanner').style.display='none';
+      localStorage.setItem('sps-wip-dismissed','1');
+    " style="
+      background:none;border:none;color:var(--t3);font-size:18px;line-height:1;
+      cursor:pointer;padding:0 4px;flex-shrink:0;opacity:.6;transition:opacity .15s;
+    " onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.6'"
+      title="Dismiss">✕</button>
+  </div>
+  <script>
+    if(localStorage.getItem('sps-wip-dismissed')==='1'){
+      document.getElementById('wipBanner').style.display='none';
+    }
+  </script>
 
   <!-- Main -->
   <div class="main">
@@ -190,18 +223,18 @@
     </div>
     <div class="page-sub">
       <span>Proprietary Market Risk On / Risk Off signals — Updates daily after market close</span>
-      <span style="color:var(--t3);font-size:11px;">Updated: Apr 26, 2026</span>
+      <span style="color:var(--t3);font-size:11px;" id="updatedLabel">Updated: Apr 26, 2026</span>
     </div>
 
     <!-- Signal stat cards -->
     <div class="stats-bar">
       <div class="stat-card">
         <div class="stat-lbl">Short Term Signal</div>
-        <div><span class="stat-val neg">RISK OFF</span><span class="stat-since">· Since Mar 6, 2026</span></div>
+        <div><span class="stat-val pos">RISK ON</span><span class="stat-since">· Since Apr 10, 2026</span></div>
       </div>
       <div class="stat-card">
         <div class="stat-lbl">Long Term Signal</div>
-        <div><span class="stat-val warn">CAUTION</span><span class="stat-since">· Since Mar 6, 2026</span></div>
+        <div><span class="stat-val pos">RISK ON</span><span class="stat-since">· Since Apr 10, 2026</span></div>
       </div>
     </div>
 
@@ -212,7 +245,7 @@
         <div class="chart-hdr">
           <div class="chart-title-area">
             <span class="chart-lbl">Short Term Trend</span>
-            <span class="chart-pill pill-risk-off">Risk Off</span>
+            <span class="chart-pill pill-risk-on">Risk On</span>
             <span class="chart-ticker" id="shortLbl">SPY · Daily</span>
           </div>
           <div class="range-btns">
@@ -235,7 +268,7 @@
         <div class="chart-hdr">
           <div class="chart-title-area">
             <span class="chart-lbl">Long Term Trend</span>
-            <span class="chart-pill pill-caution">Caution</span>
+            <span class="chart-pill pill-risk-on">Risk On</span>
             <span class="chart-ticker" id="longLbl">SPY · Weekly</span>
           </div>
           <div class="range-btns">
@@ -454,8 +487,48 @@ function genT2108(data){
   });
 }
 
+// ── Yahoo Finance fetch ──────────────────────────────────────
+async function fetchYahooOHLC(symbol) {
+  try {
+    const end = Math.floor(Date.now()/1000);
+    const start = end - 10*365*24*3600;
+    const url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d&period1=${start}&period2=${end}&events=history`;
+    const res = await fetch(url);
+    if(!res.ok) throw new Error('fetch failed');
+    const json = await res.json();
+    const result = json.chart.result[0];
+    const ts = result.timestamp;
+    const q = result.indicators.quote[0];
+    const data = [];
+    for(let i=0;i<ts.length;i++){
+      if(q.open[i]==null||q.high[i]==null||q.low[i]==null||q.close[i]==null) continue;
+      const d = new Date(ts[i]*1000);
+      // skip weekends
+      if(d.getUTCDay()===0||d.getUTCDay()===6) continue;
+      data.push({
+        time: d.toISOString().split('T')[0],
+        open: +q.open[i].toFixed(2),
+        high: +q.high[i].toFixed(2),
+        low:  +q.low[i].toFixed(2),
+        close:+q.close[i].toFixed(2)
+      });
+    }
+    // deduplicate by time, keep last
+    const seen = new Map();
+    data.forEach(d=>seen.set(d.time,d));
+    return Array.from(seen.values()).sort((a,b)=>a.time<b.time?-1:1);
+  } catch(e) {
+    console.warn(`Yahoo fetch failed for ${symbol}, using generated data`, e);
+    return null;
+  }
+}
+
+// Bootstrap with generated data first, then upgrade with live data
 const daily = genDaily('2016-01-01', TODAY);
 const weekly = toWeekly(daily);
+
+// Live data store (populated async)
+const liveData = { SPY: null, QQQ: null };
 
 // ── Create chart base ────────────────────────────────────────
 function makeChart(id, extra={}) {
@@ -538,7 +611,11 @@ function addLongOverlay(chart, priceData){
 const shortChart=makeChart('chart-short');
 const shortMarkers=addShortOverlay(shortChart,daily);
 const shortCandles=shortChart.addCandlestickSeries({upColor:'#7ee787',downColor:'#f85149',borderUpColor:'#7ee787',borderDownColor:'#f85149',wickUpColor:'#7ee787',wickDownColor:'#f85149'});
-shortCandles.setData(daily); shortCandles.setMarkers(shortMarkers);
+shortCandles.setData(daily);
+// Add manual Apr 10 Risk On marker
+shortMarkers.push({time:'2026-04-10',position:'belowBar',color:'#7ee787',shape:'arrowUp',text:'Risk On',size:1.5});
+shortMarkers.sort((a,b)=>a.time<b.time?-1:1);
+shortCandles.setMarkers(shortMarkers);
 setRange(shortChart,'1y');
 window._shortChart=shortChart; window._shortSeries=shortCandles; window._shortData=daily;
 
@@ -546,7 +623,19 @@ window._shortChart=shortChart; window._shortSeries=shortCandles; window._shortDa
 const longChart=makeChart('chart-long');
 const longMarkers=addLongOverlay(longChart,weekly);
 const longCandles=longChart.addCandlestickSeries({upColor:'#7ee787',downColor:'#f85149',borderUpColor:'#7ee787',borderDownColor:'#f85149',wickUpColor:'#7ee787',wickDownColor:'#f85149'});
-longCandles.setData(weekly); longCandles.setMarkers(longMarkers);
+longCandles.setData(weekly);
+// Add manual Apr 10 Risk On marker — find the weekly bar that contains Apr 10
+const apr10 = new Date('2026-04-10');
+const apr10WeekBar = weekly.find(w => {
+  const wDate = new Date(w.time);
+  const wEnd = new Date(wDate); wEnd.setDate(wEnd.getDate()+6);
+  return wDate <= apr10 && apr10 <= wEnd;
+});
+if(apr10WeekBar) {
+  longMarkers.push({time:apr10WeekBar.time,position:'belowBar',color:'#7ee787',shape:'arrowUp',text:'Risk On',size:1.5});
+  longMarkers.sort((a,b)=>a.time<b.time?-1:1);
+}
+longCandles.setMarkers(longMarkers);
 setRange(longChart,'5y');
 window._longChart=longChart; window._longSeries=longCandles; window._longData=weekly;
 
@@ -582,7 +671,44 @@ const t2108Series=intChart.addLineSeries({color:'#f97583',lineWidth:1.8,priceSca
 t2108Series.setData(t2108_1y);
 
 // ── Ticker toggle ─────────────────────────────────────────────
+let activeTicker = 'SPY';
+
+function applyLiveData(tk) {
+  const src = liveData[tk];
+  if(!src) return; // not loaded yet
+  const wk = toWeekly(src);
+
+  // Rebuild short chart
+  try { shortChart.removeSeries(window._shortSeries); } catch(_){}
+  try { shortChart.removeSeries(window._shortBgSeries); } catch(_){}
+  const sm = addShortOverlay(shortChart, src);
+  const sc = shortChart.addCandlestickSeries({upColor:'#7ee787',downColor:'#f85149',borderUpColor:'#7ee787',borderDownColor:'#f85149',wickUpColor:'#7ee787',wickDownColor:'#f85149'});
+  sc.setData(src);
+  sm.push({time:'2026-04-10',position:'belowBar',color:'#7ee787',shape:'arrowUp',text:'Risk On',size:1.5});
+  sm.sort((a,b)=>a.time<b.time?-1:1);
+  sc.setMarkers(sm);
+  window._shortSeries=sc; window._shortData=src;
+  // restore active range
+  const activeShortBtn = document.querySelector('.rbtn.active[data-chart="short"]');
+  setRange(shortChart, activeShortBtn ? activeShortBtn.dataset.range : '1y');
+
+  // Rebuild long chart
+  try { longChart.removeSeries(window._longSeries); } catch(_){}
+  try { longChart.removeSeries(window._longBgSeries); } catch(_){}
+  const lm = addLongOverlay(longChart, wk);
+  const lc = longChart.addCandlestickSeries({upColor:'#7ee787',downColor:'#f85149',borderUpColor:'#7ee787',borderDownColor:'#f85149',wickUpColor:'#7ee787',wickDownColor:'#f85149'});
+  lc.setData(wk);
+  const apr10d = new Date('2026-04-10');
+  const apr10w = wk.find(w=>{ const wd=new Date(w.time),we=new Date(wd); we.setDate(we.getDate()+6); return wd<=apr10d&&apr10d<=we; });
+  if(apr10w){ lm.push({time:apr10w.time,position:'belowBar',color:'#7ee787',shape:'arrowUp',text:'Risk On',size:1.5}); lm.sort((a,b)=>a.time<b.time?-1:1); }
+  lc.setMarkers(lm);
+  window._longSeries=lc; window._longData=wk;
+  const activeLongBtn = document.querySelector('.rbtn.active[data-chart="long"]');
+  setRange(longChart, activeLongBtn ? activeLongBtn.dataset.range : '5y');
+}
+
 function setTicker(tk) {
+  activeTicker = tk;
   document.getElementById('shortLbl').textContent=`${tk} · Daily`;
   document.getElementById('longLbl').textContent=`${tk} · Weekly`;
   document.getElementById('intLbl').textContent=`${tk} · Daily · 1 Year`;
@@ -593,7 +719,41 @@ function setTicker(tk) {
     btn.style.background = active ? '#1f6feb' : 'transparent';
     btn.style.color = active ? '#fff' : 'var(--t2)';
   });
+  applyLiveData(tk);
 }
+
+// ── Load live data async ──────────────────────────────────────
+(async () => {
+  // Show subtle loading state
+  const loadingStyle = document.createElement('style');
+  loadingStyle.textContent = '#chart-short,#chart-long{opacity:0.6;transition:opacity .4s}';
+  document.head.appendChild(loadingStyle);
+
+  const [spyData, qqqData] = await Promise.all([
+    fetchYahooOHLC('SPY'),
+    fetchYahooOHLC('QQQ')
+  ]);
+
+  if(spyData) liveData.SPY = spyData;
+  if(qqqData) liveData.QQQ = qqqData;
+
+  // Remove loading style
+  loadingStyle.remove();
+
+  // Apply live data for whichever ticker is active
+  applyLiveData(activeTicker);
+
+  // Update the "Updated" timestamp in the subtitle and WIP banner
+  if(spyData && spyData.length) {
+    const lastDate = new Date(spyData[spyData.length-1].time);
+    const label = lastDate.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+    const updatedEl = document.getElementById('updatedLabel');
+    if(updatedEl) updatedEl.textContent = `Updated: ${label}`;
+    // also update WIP banner date
+    const wipDate = document.getElementById('wipLastDate');
+    if(wipDate) wipDate.textContent = label;
+  }
+})();
 
 // ── Breadth table data ────────────────────────────────────────
 function buildTableData(){
