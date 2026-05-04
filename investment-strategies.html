@@ -660,6 +660,320 @@
       line-height: 1.65;
     }
 
+    /* ── Backtest accordion (inside Simply Leveraged card) ── */
+    .bt-accordion-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 16px 0 0;
+    }
+    .bt-accordion-trigger {
+      width: 100%;
+      background: none;
+      border: none;
+      padding: 12px 0 4px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      cursor: pointer;
+      font-family: inherit;
+      text-align: left;
+    }
+    .bt-accordion-trigger-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .bt-accordion-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: oklch(72% 0.12 60 / 0.12);
+      border: 1px solid oklch(72% 0.12 60 / 0.35);
+      color: oklch(48% 0.12 60);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 100px;
+      flex-shrink: 0;
+    }
+    html.dark .bt-accordion-pill {
+      background: oklch(72% 0.12 60 / 0.15);
+      border-color: oklch(72% 0.12 60 / 0.4);
+      color: oklch(76% 0.14 60);
+    }
+    .bt-accordion-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .bt-accordion-hint {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-sub);
+      margin-left: 4px;
+    }
+    .bt-accordion-chevron {
+      flex-shrink: 0;
+      width: 16px;
+      height: 16px;
+      stroke: var(--text-sub);
+      fill: none;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transition: transform 0.25s;
+    }
+    .bt-accordion-trigger[aria-expanded="true"] .bt-accordion-chevron {
+      transform: rotate(180deg);
+    }
+    .bt-accordion-body {
+      padding-top: 12px;
+    }
+
+    /* Mini hero stats row */
+    .bt-mini-stats {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0;
+      background: var(--dark);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+    html.dark .bt-mini-stats { background: #0a1628; border: 1px solid rgba(255,255,255,0.06); }
+    .bt-mini-stat {
+      padding: 12px 10px;
+      border-right: 1px solid rgba(255,255,255,0.07);
+      text-align: center;
+    }
+    .bt-mini-stat:last-child { border-right: none; }
+    .bt-mini-label { font-size: 10px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: oklch(55% 0.06 240); margin-bottom: 4px; }
+    .bt-mini-value { font-size: 15px; font-weight: 800; color: white; letter-spacing: -0.5px; }
+    .bt-mini-value.positive { color: oklch(72% 0.18 155); }
+    .bt-mini-value.negative { color: oklch(68% 0.18 25); }
+
+    /* Chart */
+    .bt-chart-wrap {
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1.5px solid var(--border);
+      background: #111827;
+      margin-bottom: 14px;
+    }
+    .bt-chart-wrap img { width: 100%; display: block; }
+    .bt-chart-caption {
+      padding: 8px 12px;
+      font-size: 11px;
+      color: oklch(55% 0.05 240);
+      background: #111827;
+      text-align: center;
+    }
+
+    /* Full stats two-col grid */
+    .bt-full-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .bt-fs-col {
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .bt-fs-group-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--text-sub);
+      background: var(--bg);
+      padding: 6px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .bt-fs-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 7px 12px;
+      border-bottom: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--text-sub);
+    }
+    .bt-fs-row:last-child { border-bottom: none; }
+    .bt-fs-row span:last-child { font-weight: 700; color: var(--text-main); font-variant-numeric: tabular-nums; }
+    .bt-fs-row span.highlight { color: var(--blue); }
+    .bt-fs-row span.positive { color: oklch(45% 0.16 155); }
+    .bt-fs-row span.negative { color: oklch(48% 0.18 25); }
+    html.dark .bt-fs-row span.positive { color: oklch(72% 0.18 155); }
+    html.dark .bt-fs-row span.negative { color: oklch(68% 0.18 25); }
+
+    .bt-footer-note {
+      font-size: 11px;
+      color: var(--text-sub);
+      line-height: 1.6;
+      border-left: 3px solid oklch(72% 0.12 60 / 0.5);
+      padding-left: 10px;
+      margin-top: 4px;
+    }
+
+    /* dark mode for accordion internals */
+    html.dark .bt-fs-col { border-color: rgba(255,255,255,0.08); }
+    html.dark .bt-fs-group-label { background: #131f35; border-color: rgba(255,255,255,0.06); }
+    html.dark .bt-fs-row { border-color: rgba(255,255,255,0.06); }
+    html.dark .bt-chart-wrap { border-color: rgba(255,255,255,0.08); }
+
+    /* ── Backtest Section ── */
+    .backtest-section { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+
+    .backtest-disclaimer-bar {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: oklch(72% 0.12 60 / 0.12);
+      border: 1px solid oklch(72% 0.12 60 / 0.35);
+      color: oklch(48% 0.12 60);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 100px;
+      margin-bottom: 20px;
+    }
+    html.dark .backtest-disclaimer-bar {
+      background: oklch(72% 0.12 60 / 0.15);
+      border-color: oklch(72% 0.12 60 / 0.4);
+      color: oklch(76% 0.14 60);
+    }
+    .backtest-disclaimer-bar svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+
+    /* Hero stat strip */
+    .backtest-hero-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      background: var(--dark);
+      border-radius: 16px;
+      overflow: hidden;
+      margin: 32px 0 28px;
+    }
+    html.dark .backtest-hero-stats { background: #0a1628; border: 1px solid rgba(255,255,255,0.06); }
+
+    .bt-hero-stat {
+      padding: 28px 28px 24px;
+      border-right: 1px solid rgba(255,255,255,0.07);
+      position: relative;
+    }
+    .bt-hero-stat:last-child { border-right: none; }
+
+    .bt-hero-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: oklch(55% 0.06 240);
+      margin-bottom: 10px;
+    }
+    .bt-hero-value {
+      font-size: clamp(26px, 3.5vw, 36px);
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1;
+      color: white;
+    }
+    .bt-hero-value.positive { color: oklch(72% 0.18 155); }
+    .bt-hero-sub {
+      font-size: 12px;
+      color: oklch(52% 0.06 240);
+      margin-top: 6px;
+      line-height: 1.4;
+    }
+
+    /* Chart + table layout */
+    .backtest-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+      align-items: start;
+    }
+
+    .backtest-chart-wrap {
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1.5px solid var(--border);
+      background: #111827;
+    }
+    .backtest-chart-wrap img {
+      width: 100%;
+      display: block;
+    }
+    .backtest-chart-caption {
+      padding: 10px 14px;
+      font-size: 11px;
+      color: oklch(55% 0.05 240);
+      background: #111827;
+      text-align: center;
+      letter-spacing: 0.03em;
+    }
+
+    /* Stats table */
+    .bt-stats-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .bt-stats-group-title {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-sub);
+      background: var(--bg);
+      padding: 8px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .bt-stat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+    .bt-stat-row:last-child { border-bottom: none; }
+    .bt-stat-name { color: var(--text-sub); }
+    .bt-stat-val { font-weight: 700; color: var(--text-main); font-variant-numeric: tabular-nums; }
+    .bt-stat-val.highlight { color: var(--blue); }
+    .bt-stat-val.positive { color: oklch(52% 0.18 155); }
+    .bt-stat-val.negative { color: oklch(52% 0.18 25); }
+
+    .backtest-footer-note {
+      margin-top: 20px;
+      font-size: 12px;
+      color: var(--text-sub);
+      line-height: 1.6;
+      border-left: 3px solid oklch(72% 0.12 60 / 0.5);
+      padding-left: 14px;
+    }
+
+    @media (max-width: 900px) {
+      .backtest-hero-stats { grid-template-columns: repeat(2, 1fr); }
+      .bt-hero-stat { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.07); }
+      .bt-hero-stat:nth-child(odd) { border-right: 1px solid rgba(255,255,255,0.07); }
+      .bt-hero-stat:last-child { border-bottom: none; }
+      .backtest-body { grid-template-columns: 1fr; }
+    }
+
     /* ── Divider ── */
     .divider { border: none; border-top: 1px solid var(--border); }
 
@@ -688,6 +1002,10 @@
     html.dark .faq-q:hover { background:#1e293b; }
     html.dark footer { background:#1e293b; }
     html.dark .lev-callout { background:rgba(88,166,255,0.08); }
+    html.dark .bt-stats-panel { background:#1e293b; border-color:rgba(255,255,255,0.08); }
+    html.dark .bt-stats-group-title { background:#131f35; border-color:rgba(255,255,255,0.06); }
+    html.dark .bt-stat-row { border-color:rgba(255,255,255,0.06); }
+    html.dark .backtest-chart-wrap { border-color:rgba(255,255,255,0.08); }
     .theme-toggle-btn { background:transparent; border:1.5px solid var(--border); border-radius:8px; padding:5px 10px; cursor:pointer; font-size:14px; color:var(--text-sub); line-height:1; transition:border-color .2s; }
     .theme-toggle-btn:hover { border-color:var(--blue); }
   </style>
@@ -783,7 +1101,7 @@
     <p>All results are post-fee, post-slippage, executed in real brokerage accounts. Past performance does not guarantee future results.</p>
 
     <div class="perf-grid">
-      <div class="perf-card">
+      <div class="perf-card perf-card--leveraged" id="backtest">
         <div class="perf-rank">Top 8% on C2 · Rank #94</div>
         <div class="perf-name">Simply Leveraged</div>
         <div class="perf-type">Systematic · Live since Dec 2025</div>
@@ -795,6 +1113,83 @@
           <div class="perf-stat"><span class="stat-label">Min Capital</span><span class="stat-value">$15,000</span></div>
         </div>
         <a class="perf-cta" href="https://collective2.com/details/153931711" target="_blank" rel="noopener">View on Collective2 <svg viewBox="0 0 14 14"><line x1="2" y1="7" x2="12" y2="7"/><polyline points="8,3 12,7 8,11"/></svg></a>
+
+        <!-- Backtest accordion -->
+        <div class="bt-accordion-divider"></div>
+        <button class="bt-accordion-trigger" onclick="toggleBacktest(this)" aria-expanded="false">
+          <div class="bt-accordion-trigger-left">
+            <span class="bt-accordion-pill">
+              <svg viewBox="0 0 13 13" style="width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;"><circle cx="6.5" cy="6.5" r="5"/><line x1="6.5" y1="4.5" x2="6.5" y2="6.5"/><circle cx="6.5" cy="8.5" r="0.5" fill="currentColor" stroke="none"/></svg>
+              Simulated · Not live
+            </span>
+            <span class="bt-accordion-label">5-Year Backtest <span class="bt-accordion-hint">$25K → $190K · 660% return</span></span>
+          </div>
+          <svg class="bt-accordion-chevron" viewBox="0 0 14 14"><polyline points="3,5 7,9 11,5"/></svg>
+        </button>
+
+        <div class="bt-accordion-body" hidden>
+          <!-- Mini hero stats -->
+          <div class="bt-mini-stats">
+            <div class="bt-mini-stat">
+              <div class="bt-mini-label">Net Return</div>
+              <div class="bt-mini-value positive">660%</div>
+            </div>
+            <div class="bt-mini-stat">
+              <div class="bt-mini-label">CAGR</div>
+              <div class="bt-mini-value positive">47.2%</div>
+            </div>
+            <div class="bt-mini-stat">
+              <div class="bt-mini-label">Win Rate</div>
+              <div class="bt-mini-value">68%</div>
+            </div>
+            <div class="bt-mini-stat">
+              <div class="bt-mini-label">Sharpe</div>
+              <div class="bt-mini-value">1.00</div>
+            </div>
+            <div class="bt-mini-stat">
+              <div class="bt-mini-label">Max DD</div>
+              <div class="bt-mini-value negative">−41%</div>
+            </div>
+          </div>
+
+          <!-- Equity curve -->
+          <div class="bt-chart-wrap">
+            <img src="uploads/5 Year Back Test Results.png" alt="Simply Leveraged 5-year backtest equity curve 2021–2026" />
+            <div class="bt-chart-caption">Strategy equity curve · 2021–2026 · Simulated on historical data</div>
+          </div>
+
+          <!-- Full stats grid -->
+          <div class="bt-full-stats">
+            <div class="bt-fs-col">
+              <div class="bt-fs-group-label">Returns</div>
+              <div class="bt-fs-row"><span>Net Profit</span><span class="highlight">660.02%</span></div>
+              <div class="bt-fs-row"><span>CAGR</span><span class="positive">47.201%</span></div>
+              <div class="bt-fs-row"><span>Start Equity</span><span>$25,000</span></div>
+              <div class="bt-fs-row"><span>End Equity</span><span class="positive">$190,005</span></div>
+              <div class="bt-fs-group-label" style="margin-top:12px;">Trades</div>
+              <div class="bt-fs-row"><span>Total Orders</span><span>144</span></div>
+              <div class="bt-fs-row"><span>Win Rate</span><span class="positive">68%</span></div>
+              <div class="bt-fs-row"><span>Avg Win</span><span class="positive">+9.58%</span></div>
+              <div class="bt-fs-row"><span>Avg Loss</span><span class="negative">−5.75%</span></div>
+              <div class="bt-fs-row"><span>P/L Ratio</span><span>1.67×</span></div>
+            </div>
+            <div class="bt-fs-col">
+              <div class="bt-fs-group-label">Risk</div>
+              <div class="bt-fs-row"><span>Max Drawdown</span><span class="negative">41.0%</span></div>
+              <div class="bt-fs-row"><span>Annual Std Dev</span><span>0.355</span></div>
+              <div class="bt-fs-row"><span>Beta</span><span>1.115</span></div>
+              <div class="bt-fs-row"><span>Annual Variance</span><span>0.126</span></div>
+              <div class="bt-fs-group-label" style="margin-top:12px;">Quality</div>
+              <div class="bt-fs-row"><span>Sharpe Ratio</span><span class="highlight">1.001</span></div>
+              <div class="bt-fs-row"><span>Sortino Ratio</span><span class="highlight">1.038</span></div>
+              <div class="bt-fs-row"><span>Alpha</span><span class="positive">0.235</span></div>
+              <div class="bt-fs-row"><span>PSR</span><span>42.472%</span></div>
+              <div class="bt-fs-row"><span>Expectancy</span><span>0.817</span></div>
+            </div>
+          </div>
+
+          <p class="bt-footer-note">Simulated on historical data 2021–2026 using the same entry/exit rules as the live strategy. The 41% max drawdown is real — this is a volatile strategy. Past simulated performance does not guarantee future results.</p>
+        </div>
       </div>
       <div class="perf-card">
         <div class="perf-rank">Top 8% on C2 · Rank #289</div>
@@ -1112,6 +1507,17 @@
 
   <script src="theme.js"></script>
   <script>
+    function toggleBacktest(btn) {
+      const expanded = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', !expanded);
+      const body = btn.nextElementSibling;
+      if (expanded) {
+        body.hidden = true;
+      } else {
+        body.hidden = false;
+      }
+    }
+
     function toggleFaq(btn) {
       const item = btn.closest('.faq-item');
       const isOpen = item.classList.contains('open');

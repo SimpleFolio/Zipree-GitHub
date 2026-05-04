@@ -168,6 +168,10 @@
     <div class="hdr-right">
       <div class="sig-badge risk-on"><div class="sig-dot"></div>Short Term: RISK ON</div>
       <div class="sig-badge risk-on"><div class="sig-dot"></div>Long Term: RISK ON</div>
+      <a href="index.html" style="display:flex;align-items:center;gap:6px;font-size:14px;font-weight:500;color:var(--t2);text-decoration:none;transition:color .2s;" onmouseenter="this.style.color='var(--t1)'" onmouseleave="this.style.color='var(--t2)'">
+        <svg style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;" viewBox="0 0 16 16"><line x1="13" y1="8" x2="3" y2="8"/><polyline points="7,4 3,8 7,12"/></svg>
+        Back to Home
+      </a>
       <div class="clock">
         <div class="clock-lbl">Today's Date</div>
         <span id="clockVal"></span>
@@ -194,20 +198,7 @@
         This page is under active development — data is <strong style="color:var(--t1);font-weight:600;">not updating daily</strong> yet. Last update: <span id="wipLastDate" style="color:var(--t1);font-weight:600;">Apr 26, 2026</span>.
       </span>
     </div>
-    <button onclick="
-      document.getElementById('wipBanner').style.display='none';
-      localStorage.setItem('sps-wip-dismissed','1');
-    " style="
-      background:none;border:none;color:var(--t3);font-size:18px;line-height:1;
-      cursor:pointer;padding:0 4px;flex-shrink:0;opacity:.6;transition:opacity .15s;
-    " onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.6'"
-      title="Dismiss">✕</button>
   </div>
-  <script>
-    if(localStorage.getItem('sps-wip-dismissed')==='1'){
-      document.getElementById('wipBanner').style.display='none';
-    }
-  </script>
 
   <!-- Main -->
   <div class="main">
