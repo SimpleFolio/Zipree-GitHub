@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Backtesting Results — Simple Portfolio Service</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/png" href="uploads/website_logo_transparent_background.png" />
+  <script>if(localStorage.getItem('sps-theme')==='dark')document.documentElement.classList.add('dark');</script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #f7f8fb;
+      --surface:     #ffffff;
+      --border:      #e2e8f0;
+      --text-main:   #111827;
+      --text-sub:    #4b5563;
+      --blue:        oklch(52% 0.18 240);
+      --blue-mid:    oklch(64% 0.16 240);
+      --blue-light:  oklch(94% 0.05 240);
+      --blue-glow:   oklch(52% 0.18 240 / 0.12);
+      --dark:        #0f172a;
+      --green:       oklch(52% 0.16 155);
+      --green-mid:   oklch(72% 0.18 155);
+      --amber:       oklch(60% 0.14 60);
+      --red:         oklch(55% 0.18 25);
+      --purple:      oklch(55% 0.18 280);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 48px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo { display: flex; align-items: center; text-decoration: none; }
+    .header-actions { display: flex; align-items: center; gap: 12px; }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-sub);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--text-main); }
+    .back-link svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    .theme-toggle-btn { background:transparent; border:1.5px solid var(--border); border-radius:8px; padding:5px 10px; cursor:pointer; font-size:14px; color:var(--text-sub); line-height:1; transition:border-color .2s; }
+    .theme-toggle-btn:hover { border-color:var(--blue); }
+
+    /* Hero */
+    .hero {
+      background: var(--dark);
+      color: white;
+      padding: 84px 48px 96px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 50% 0%, oklch(52% 0.18 240 / 0.32) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 100%, oklch(52% 0.16 155 / 0.18) 0%, transparent 55%);
+      pointer-events: none;
+    }
+    .hero-inner { position: relative; z-index: 1; max-width: 880px; margin: 0 auto; }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: oklch(52% 0.18 240 / 0.2);
+      color: var(--blue-mid);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 100px;
+      margin-bottom: 28px;
+    }
+    .hero-tag .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--blue-mid);
+      box-shadow: 0 0 8px var(--blue-mid);
+    }
+
+    .hero h1 {
+      font-size: clamp(32px, 5vw, 56px);
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      line-height: 1.1;
+      margin-bottom: 22px;
+    }
+    .hero h1 em { font-style: italic; color: var(--blue-mid); }
+
+    .hero-sub {
+      font-size: 18px;
+      color: oklch(82% 0.04 240);
+      line-height: 1.65;
+      max-width: 700px;
+      margin: 0 auto 32px;
+    }
+
+    .hero-meta {
+      display: inline-flex;
+      gap: 0;
+      flex-wrap: wrap;
+      justify-content: center;
+      background: oklch(100% 0 0 / 0.04);
+      border: 1px solid oklch(100% 0 0 / 0.1);
+      border-radius: 14px;
+      overflow: hidden;
+      backdrop-filter: blur(8px);
+    }
+    .hero-meta-item {
+      padding: 14px 24px;
+      border-right: 1px solid oklch(100% 0 0 / 0.08);
+      text-align: left;
+    }
+    .hero-meta-item:last-child { border-right: none; }
+    .hero-meta-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: oklch(60% 0.06 240); margin-bottom: 4px; }
+    .hero-meta-value { font-size: 14px; font-weight: 700; color: white; font-family: 'JetBrains Mono', monospace; }
+    @media (max-width: 720px) {
+      .hero-meta { flex-direction: column; }
+      .hero-meta-item { border-right: none; border-bottom: 1px solid oklch(100% 0 0 / 0.08); text-align: center; }
+      .hero-meta-item:last-child { border-bottom: none; }
+    }
+
+    /* Section wrapper */
+    .section {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 72px 48px;
+      width: 100%;
+    }
+    .section-narrow { max-width: 1040px; }
+
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .section-label::before {
+      content: '';
+      display: block;
+      width: 20px;
+      height: 2px;
+      background: var(--blue);
+      border-radius: 2px;
+    }
+
+    h2 {
+      font-size: clamp(24px, 3.5vw, 36px);
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+
+    h3 {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      margin-bottom: 6px;
+    }
+
+    p { font-size: 16px; line-height: 1.7; color: var(--text-sub); margin-bottom: 14px; }
+    p:last-child { margin-bottom: 0; }
+    p strong { color: var(--text-main); font-weight: 700; }
+
+    .lede { font-size: 17px; max-width: 760px; }
+
+    /* Disclaimer pill */
+    .pill-amber {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: oklch(72% 0.12 60 / 0.12);
+      border: 1px solid oklch(72% 0.12 60 / 0.35);
+      color: oklch(48% 0.12 60);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 100px;
+      margin-bottom: 20px;
+    }
+    html.dark .pill-amber {
+      background: oklch(72% 0.12 60 / 0.15);
+      border-color: oklch(72% 0.12 60 / 0.4);
+      color: oklch(76% 0.14 60);
+    }
+    .pill-amber svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+
+    /* Comparison Table */
+    .comparison-section {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .comp-table-wrap {
+      margin-top: 32px;
+      border: 1.5px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+      background: var(--surface);
+    }
+
+    .comp-scroll {
+      overflow-x: auto;
+    }
+
+    .comp-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      min-width: 880px;
+    }
+    .comp-table thead { background: var(--bg); }
+    html.dark .comp-table thead { background: #131f35; }
+    .comp-table th {
+      text-align: left;
+      padding: 16px 20px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--text-sub);
+      border-bottom: 1.5px solid var(--border);
+      white-space: nowrap;
+    }
+    .comp-table th.metric-col { width: 220px; }
+    .comp-table th.col-spy { color: oklch(58% 0.06 240); }
+    .comp-table th.col-qqq { color: oklch(58% 0.06 240); }
+    .comp-table th.col-bal { color: var(--green); }
+    .comp-table th.col-lev { color: var(--purple); }
+    html.dark .comp-table th.col-bal { color: var(--green-mid); }
+    html.dark .comp-table th.col-lev { color: oklch(72% 0.16 280); }
+
+    .comp-table td {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-sub);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    .comp-table tr:last-child td { border-bottom: none; }
+    .comp-table tr:hover td { background: var(--bg); }
+    html.dark .comp-table tr:hover td { background: rgba(88,166,255,0.04); }
+
+    .comp-table td.metric {
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: normal;
+    }
+
+    .comp-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      color: var(--text-main);
+      font-size: 13.5px;
+    }
+    .comp-num.muted { color: var(--text-sub); }
+    .comp-num.dim { color: var(--text-sub); font-style: italic; }
+
+    .comp-cell-bal { background: oklch(72% 0.18 155 / 0.04); }
+    .comp-cell-lev { background: oklch(55% 0.18 280 / 0.04); }
+    html.dark .comp-cell-bal { background: oklch(72% 0.18 155 / 0.06); }
+    html.dark .comp-cell-lev { background: oklch(72% 0.16 280 / 0.06); }
+
+    .winner-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+    .winner-tag.bal {
+      background: oklch(72% 0.18 155 / 0.14);
+      color: oklch(38% 0.12 155);
+      border: 1px solid oklch(72% 0.18 155 / 0.3);
+    }
+    .winner-tag.lev {
+      background: oklch(55% 0.18 280 / 0.12);
+      color: oklch(42% 0.16 280);
+      border: 1px solid oklch(55% 0.18 280 / 0.3);
+    }
+    .winner-tag.none {
+      color: var(--text-sub);
+      font-weight: 500;
+      letter-spacing: 0;
+      font-size: 13px;
+    }
+    html.dark .winner-tag.bal { color: var(--green-mid); border-color: oklch(72% 0.18 155 / 0.4); }
+    html.dark .winner-tag.lev { color: oklch(74% 0.16 280); border-color: oklch(72% 0.16 280 / 0.4); }
+
+    .winner-tag .crown {
+      width: 10px; height: 10px;
+      stroke: currentColor; fill: none;
+      stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 18px;
+      font-size: 12px;
+      color: var(--text-sub);
+    }
+    .legend-item { display: inline-flex; align-items: center; gap: 6px; }
+    .legend-swatch { width: 10px; height: 10px; border-radius: 3px; }
+
+    /* Strategy result section */
+    .result-block {
+      margin-top: 56px;
+    }
+    .result-block:first-of-type { margin-top: 24px; }
+
+    .result-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .result-head-left { min-width: 240px; flex: 1 1 320px; }
+
+    .result-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 100px;
+      margin-bottom: 10px;
+    }
+    .result-tag.bal { background: oklch(72% 0.18 155 / 0.14); color: oklch(38% 0.12 155); }
+    .result-tag.lev { background: oklch(55% 0.18 280 / 0.12); color: oklch(42% 0.16 280); }
+    .result-tag.bench { background: oklch(60% 0.06 240 / 0.16); color: oklch(40% 0.06 240); }
+    html.dark .result-tag.bal { color: var(--green-mid); }
+    html.dark .result-tag.lev { color: oklch(74% 0.16 280); }
+    html.dark .result-tag.bench { color: oklch(70% 0.06 240); }
+
+    .result-name {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+    }
+    .result-tagline { font-size: 15px; color: var(--text-sub); line-height: 1.55; max-width: 540px; }
+
+    .result-c2-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--blue);
+      color: white;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 10px 18px;
+      border-radius: 10px;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: opacity 0.2s;
+    }
+    .result-c2-link:hover { opacity: 0.85; }
+    .result-c2-link svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* Hero stats strip per strategy */
+    .stats-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      background: var(--dark);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 22px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    html.dark .stats-strip { background: #0a1628; }
+
+    .strip-stat {
+      padding: 22px 24px 20px;
+      border-right: 1px solid rgba(255,255,255,0.07);
+      position: relative;
+    }
+    .strip-stat:last-child { border-right: none; }
+
+    .strip-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: oklch(58% 0.06 240);
+      margin-bottom: 8px;
+    }
+    .strip-value {
+      font-size: clamp(22px, 2.6vw, 30px);
+      font-weight: 800;
+      letter-spacing: -0.8px;
+      line-height: 1;
+      color: white;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .strip-value.green { color: var(--green-mid); }
+    .strip-value.amber { color: oklch(76% 0.14 60); }
+    .strip-value.purple { color: oklch(74% 0.16 280); }
+    .strip-sub { font-size: 11px; color: oklch(50% 0.06 240); margin-top: 6px; line-height: 1.4; }
+
+    @media (max-width: 720px) {
+      .stats-strip { grid-template-columns: repeat(2, 1fr); }
+      .strip-stat { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.07); }
+      .strip-stat:nth-child(odd) { border-right: 1px solid rgba(255,255,255,0.07); }
+      .strip-stat:nth-last-child(-n+2) { border-bottom: none; }
+    }
+
+    /* Backtest screenshot frame */
+    .bt-shot-frame {
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1.5px solid var(--border);
+      background: #1e1e2e;
+      box-shadow: 0 10px 40px -20px rgba(0,0,0,0.3);
+    }
+    html.dark .bt-shot-frame { border-color: rgba(255,255,255,0.08); }
+
+    .bt-shot-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      background: linear-gradient(to bottom, #2a2a3e 0%, #1e1e2e 100%);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      gap: 12px;
+    }
+    .bt-shot-header-left { display: flex; align-items: center; gap: 8px; }
+    .bt-shot-dots { display: flex; gap: 6px; }
+    .bt-shot-dot { width: 9px; height: 9px; border-radius: 50%; }
+    .bt-shot-dot.r { background: #ff5f56; }
+    .bt-shot-dot.y { background: #ffbd2e; }
+    .bt-shot-dot.g { background: #27c93f; }
+    .bt-shot-source {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      color: oklch(70% 0.04 240);
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.04em;
+    }
+    .bt-shot-source .qc-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: oklch(72% 0.18 155);
+      box-shadow: 0 0 8px oklch(72% 0.18 155 / 0.6);
+    }
+
+    .bt-shot-img {
+      width: 100%;
+      display: block;
+      background: #0d1117;
+    }
+
+    .bt-shot-caption {
+      padding: 10px 16px;
+      font-size: 11px;
+      color: oklch(60% 0.05 240);
+      background: #0d1117;
+      text-align: center;
+      letter-spacing: 0.04em;
+      font-family: 'JetBrains Mono', monospace;
+      border-top: 1px solid rgba(255,255,255,0.04);
+    }
+
+    /* Highlights row */
+    .highlight-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 22px;
+    }
+
+    .highlight-card {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 18px 20px;
+    }
+    html.dark .highlight-card { background: #1e293b; border-color: rgba(255,255,255,0.08); }
+
+    .highlight-icon {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 10px;
+    }
+    .highlight-icon svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.25; stroke-linecap: round; stroke-linejoin: round; }
+    .highlight-icon.green { background: oklch(72% 0.18 155 / 0.14); color: var(--green); }
+    .highlight-icon.amber { background: oklch(72% 0.12 60 / 0.14); color: oklch(48% 0.12 60); }
+    .highlight-icon.blue { background: var(--blue-light); color: var(--blue); }
+    html.dark .highlight-icon.green { color: var(--green-mid); }
+    html.dark .highlight-icon.amber { color: oklch(76% 0.14 60); }
+
+    .highlight-title { font-size: 14px; font-weight: 700; color: var(--text-main); margin-bottom: 4px; }
+    .highlight-text { font-size: 13px; color: var(--text-sub); line-height: 1.55; margin: 0; }
+
+    @media (max-width: 720px) {
+      .highlight-row { grid-template-columns: 1fr; }
+    }
+
+    /* Benchmarks section */
+    .bench-section { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+
+    .bench-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 28px;
+    }
+    @media (max-width: 880px) { .bench-grid { grid-template-columns: 1fr; } }
+
+    .bench-card {
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      padding: 22px;
+    }
+    html.dark .bench-card { background: #131f35; border-color: rgba(255,255,255,0.06); }
+
+    .bench-card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .bench-card-title { font-size: 16px; font-weight: 800; letter-spacing: -0.3px; }
+    .bench-card-subtitle { font-size: 12px; color: var(--text-sub); margin-top: 2px; }
+
+    .bench-mini-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      background: var(--dark);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+    html.dark .bench-mini-stats { background: #0a1628; }
+
+    .bench-mini {
+      padding: 12px 12px;
+      border-right: 1px solid rgba(255,255,255,0.07);
+      text-align: center;
+    }
+    .bench-mini:last-child { border-right: none; }
+    .bench-mini-label { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: oklch(55% 0.06 240); margin-bottom: 5px; }
+    .bench-mini-value { font-size: 16px; font-weight: 800; color: white; font-family: 'JetBrains Mono', monospace; letter-spacing: -0.3px; }
+
+    /* Methodology grid */
+    .method-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 32px;
+    }
+    @media (max-width: 880px) { .method-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 520px) { .method-grid { grid-template-columns: 1fr; } }
+
+    .method-card {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 22px;
+    }
+    html.dark .method-card { background: #1e293b; border-color: rgba(255,255,255,0.08); }
+
+    .method-num {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--blue);
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 10px;
+    }
+    .method-title { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+    .method-text { font-size: 13px; color: var(--text-sub); line-height: 1.55; margin: 0; }
+
+    /* QC source ribbon */
+    .qc-ribbon {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: linear-gradient(135deg, oklch(72% 0.18 155 / 0.08) 0%, oklch(52% 0.18 240 / 0.06) 100%);
+      border: 1px solid oklch(72% 0.18 155 / 0.25);
+      border-radius: 14px;
+      padding: 18px 22px;
+      margin-top: 28px;
+    }
+    html.dark .qc-ribbon {
+      background: linear-gradient(135deg, oklch(72% 0.18 155 / 0.1) 0%, oklch(52% 0.18 240 / 0.08) 100%);
+      border-color: oklch(72% 0.18 155 / 0.3);
+    }
+    .qc-ribbon-icon {
+      flex-shrink: 0;
+      width: 40px; height: 40px;
+      background: oklch(72% 0.18 155 / 0.18);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .qc-ribbon-icon svg { width: 22px; height: 22px; stroke: var(--green); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    html.dark .qc-ribbon-icon svg { stroke: var(--green-mid); }
+    .qc-ribbon-text { flex: 1; }
+    .qc-ribbon-text strong { display: block; font-size: 14px; color: var(--text-main); margin-bottom: 3px; }
+    .qc-ribbon-text span { font-size: 13px; color: var(--text-sub); }
+
+    /* Disclaimer block */
+    .disclaimer-block {
+      margin-top: 32px;
+      padding: 22px 26px;
+      border-left: 4px solid oklch(72% 0.12 60 / 0.6);
+      background: oklch(72% 0.12 60 / 0.06);
+      border-radius: 0 12px 12px 0;
+    }
+    html.dark .disclaimer-block { background: oklch(72% 0.12 60 / 0.08); }
+    .disclaimer-block strong { display: block; font-size: 13px; font-weight: 700; color: oklch(48% 0.12 60); margin-bottom: 6px; letter-spacing: 0.03em; }
+    html.dark .disclaimer-block strong { color: oklch(76% 0.14 60); }
+    .disclaimer-block p { font-size: 13px; line-height: 1.65; margin: 0; }
+
+    /* Final CTA */
+    .final-cta {
+      background: var(--dark);
+      color: white;
+      padding: 84px 48px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .final-cta::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 100%, oklch(52% 0.18 240 / 0.25) 0%, transparent 65%);
+    }
+    .final-cta-inner { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; }
+    .final-cta h2 { color: white; margin-bottom: 14px; }
+    .final-cta p { color: oklch(75% 0.04 240); margin-bottom: 32px; font-size: 16px; }
+
+    .hero-ctas {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--blue);
+      color: white;
+      font-size: 15px;
+      font-weight: 700;
+      padding: 13px 26px;
+      border-radius: 12px;
+      text-decoration: none;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .btn-primary:hover { opacity: 0.9; transform: translateY(-2px); }
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: oklch(100% 0 0 / 0.08);
+      color: white;
+      font-size: 15px;
+      font-weight: 600;
+      padding: 13px 26px;
+      border-radius: 12px;
+      border: 1px solid oklch(100% 0 0 / 0.15);
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .btn-secondary:hover { background: oklch(100% 0 0 / 0.14); }
+
+    /* Footer */
+    footer {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 32px 48px;
+    }
+    .footer-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .footer-links { display: flex; gap: 24px; flex-wrap: wrap; }
+    .footer-links a { font-size: 13px; color: var(--text-sub); text-decoration: none; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--text-main); }
+    .footer-disclaimer {
+      font-size: 12px;
+      color: var(--text-sub);
+      line-height: 1.65;
+    }
+
+    /* Dark mode body overrides */
+    html.dark body { --bg:#0f172a; --surface:#1e293b; --border:rgba(255,255,255,0.08); --text-main:#f1f5f9; --text-sub:#94a3b8; --blue-light:rgba(88,166,255,0.1); --blue-glow:oklch(52% 0.18 240 / 0.2); }
+    html.dark .comparison-section { background: #131f35; }
+    html.dark .bench-section { background: #131f35; }
+    html.dark .comp-table-wrap { background: #1e293b; }
+    html.dark footer { background: #1e293b; }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      header { padding: 18px 24px; }
+      .hero, .final-cta { padding: 60px 24px; }
+      .section { padding: 56px 24px; }
+      .stats-strip { grid-template-columns: repeat(2, 1fr); }
+      footer { padding: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <a class="logo" href="index.html">
+      <img src="uploads/website_logo_transparent_background.png" alt="Simple Portfolio Service" style="height:48px;width:auto;display:block;" />
+    </a>
+    <div class="header-actions">
+      <a class="back-link" href="investment-strategies.html">
+        <svg viewBox="0 0 16 16"><line x1="13" y1="8" x2="3" y2="8"/><polyline points="7,4 3,8 7,12"/></svg>
+        Back to Strategies
+      </a>
+      <a class="back-link" href="index.html" style="border-left:1px solid var(--border); padding-left:12px;">
+        Home
+      </a>
+      <button class="theme-toggle-btn" id="themeToggle" title="Toggle dark mode">🌙</button>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="hero-tag">
+        <span class="dot"></span>
+        Backtesting Results
+      </div>
+      <h1>10 years of data. <em>Receipts</em>, not promises.</h1>
+      <p class="hero-sub">Both systematic strategies — Simply Balanced and Simply Leveraged — were tested against the same 10‑year window on QuantConnect. Same engine. Same fills. Same starting equity. Compared side‑by‑side with SPY and QQQ buy‑and‑hold.</p>
+
+      <div class="hero-meta">
+        <div class="hero-meta-item">
+          <div class="hero-meta-label">Period</div>
+          <div class="hero-meta-value">2016 — 2025</div>
+        </div>
+        <div class="hero-meta-item">
+          <div class="hero-meta-label">Duration</div>
+          <div class="hero-meta-value">10 Years</div>
+        </div>
+        <div class="hero-meta-item">
+          <div class="hero-meta-label">Engine</div>
+          <div class="hero-meta-value">QuantConnect</div>
+        </div>
+        <div class="hero-meta-item">
+          <div class="hero-meta-label">Start Equity</div>
+          <div class="hero-meta-value">$25,000</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Comparison Table -->
+  <div class="comparison-section">
+    <div class="section">
+      <div class="pill-amber">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Past performance — not a guarantee
+      </div>
+      <div class="section-label">The Numbers</div>
+      <h2>Side‑by‑side: SPY vs QQQ vs Simply Balanced vs Simply Leveraged</h2>
+      <p class="lede">Same 10‑year backtest window, same engine, same fills, same starting equity. The "Winner" column flags which strategy led on each metric — risk, return, and consistency are not always won by the same name.</p>
+
+      <div class="comp-table-wrap">
+        <div class="comp-scroll">
+          <table class="comp-table">
+            <thead>
+              <tr>
+                <th class="metric-col">Metric</th>
+                <th class="col-spy">SPY · Buy &amp; Hold</th>
+                <th class="col-qqq">QQQ · Buy &amp; Hold</th>
+                <th class="col-bal">Simply Balanced</th>
+                <th class="col-lev">Simply Leveraged</th>
+                <th>Winner</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="metric">Starting Equity</td>
+                <td><span class="comp-num muted">$25,000</span></td>
+                <td><span class="comp-num muted">$25,000</span></td>
+                <td class="comp-cell-bal"><span class="comp-num">$25,000</span></td>
+                <td class="comp-cell-lev"><span class="comp-num">$25,000</span></td>
+                <td><span class="winner-tag none">—</span></td>
+              </tr>
+              <tr>
+                <td class="metric">Ending Equity</td>
+                <td><span class="comp-num muted">$98,848</span></td>
+                <td><span class="comp-num muted">$144,716</span></td>
+                <td class="comp-cell-bal"><span class="comp-num">$293,850</span></td>
+                <td class="comp-cell-lev"><span class="comp-num">$596,745</span></td>
+                <td><span class="winner-tag lev"><svg class="crown" viewBox="0 0 12 12"><path d="M2 9 L2 4 L4.5 6 L6 3 L7.5 6 L10 4 L10 9 Z"/></svg>Simply Leveraged</span></td>
+              </tr>
+              <tr>
+                <td class="metric">Net Profit</td>
+                <td><span class="comp-num muted">295.4%</span></td>
+                <td><span class="comp-num muted">478.9%</span></td>
+                <td class="comp-cell-bal"><span class="comp-num">1,075.4%</span></td>
+                <td class="comp-cell-lev"><span class="comp-num">2,287.0%</span></td>
+                <td><span class="winner-tag lev"><svg class="crown" viewBox="0 0 12 12"><path d="M2 9 L2 4 L4.5 6 L6 3 L7.5 6 L10 4 L10 9 Z"/></svg>Simply Leveraged</span></td>
+              </tr>
+              <tr>
+                <td class="metric">Compounding Annual Return</td>
+                <td><span class="comp-num muted">14.57%</span></td>
+                <td><span class="comp-num muted">18.97%</span></td>
+                <td class="comp-cell-bal"><span class="comp-num">27.61%</span></td>
+                <td class="comp-cell-lev"><span class="comp-num">36.87%</span></td>
+                <td><span class="winner-tag lev"><svg class="crown" viewBox="0 0 12 12"><path d="M2 9 L2 4 L4.5 6 L6 3 L7.5 6 L10 4 L10 9 Z"/></svg>Simply Leveraged</span></td>
+              </tr>
+              <tr>
+                <td class="metric">Max Drawdown</td>
+                <td><span class="comp-num muted">33.40%</span></td>
+                <td><span class="comp-num muted">35.00%</span></td>
+                <td class="comp-cell-bal"><span class="comp-num">21.90%</span></td>
+                <td class="comp-cell-lev"><span class="comp-num">41.00%</span></td>
+                <td><span class="winner-tag bal"><svg class="crown" viewBox="0 0 12 12"><path d="M2 9 L2 4 L4.5 6 L6 3 L7.5 6 L10 4 L10 9 Z"/></svg>Simply Balanced</span></td>
+              </tr>
+              <tr>
+                <td class="metric">Drawdown Recovery <span style="color:var(--text-sub); font-weight:500; font-size:12px;">(days)</span></td>
+                <td><span class="comp-num muted">708</span></td>
+                <td><span class="comp-num muted">715</span></td>
+                <td class="comp-cell-bal"><span class="comp-num">373</span></td>
+                <td class="comp-cell-lev"><span class="comp-num">437</span></td>
+                <td><span class="winner-tag bal"><svg class="crown" viewBox="0 0 12 12"><path d="M2 9 L2 4 L4.5 6 L6 3 L7.5 6 L10 4 L10 9 Z"/></svg>Simply Balanced</span></td>
+              </tr>
+              <tr>
+                <td class="metric">Sharpe Ratio</td>
+                <td><span class="comp-num muted">0.57</span></td>
+                <td><span class="comp-num muted">0.65</span></td>
+                <td class="comp-cell-bal"><span class="comp-num">1.01</span></td>
+                <td class="comp-cell-lev"><span class="comp-num">0.87</span></td>
+                <td><span class="winner-tag bal"><svg class="crown" viewBox="0 0 12 12"><path d="M2 9 L2 4 L4.5 6 L6 3 L7.5 6 L10 4 L10 9 Z"/></svg>Simply Balanced</span></td>
+              </tr>
+              <tr>
+                <td class="metric">Sortino Ratio</td>
+                <td><span class="comp-num muted">0.56</span></td>
+                <td><span class="comp-num muted">0.69</span></td>
+                <td class="comp-cell-bal"><span class="comp-num">0.99</span></td>
+                <td class="comp-cell-lev"><span class="comp-num">0.86</span></td>
+                <td><span class="winner-tag bal"><svg class="crown" viewBox="0 0 12 12"><path d="M2 9 L2 4 L4.5 6 L6 3 L7.5 6 L10 4 L10 9 Z"/></svg>Simply Balanced</span></td>
+              </tr>
+              <tr>
+                <td class="metric">Probabilistic Sharpe (PSR)</td>
+                <td><span class="comp-num muted">13.6%</span></td>
+                <td><span class="comp-num muted">16.7%</span></td>
+                <td class="comp-cell-bal"><span class="comp-num">59.4%</span></td>
+                <td class="comp-cell-lev"><span class="comp-num">25.5%</span></td>
+                <td><span class="winner-tag bal"><svg class="crown" viewBox="0 0 12 12"><path d="M2 9 L2 4 L4.5 6 L6 3 L7.5 6 L10 4 L10 9 Z"/></svg>Simply Balanced</span></td>
+              </tr>
+              <tr>
+                <td class="metric">Win Rate</td>
+                <td><span class="comp-num dim">n/a</span></td>
+                <td><span class="comp-num dim">n/a</span></td>
+                <td class="comp-cell-bal"><span class="comp-num">73%</span></td>
+                <td class="comp-cell-lev"><span class="comp-num">67%</span></td>
+                <td><span class="winner-tag bal"><svg class="crown" viewBox="0 0 12 12"><path d="M2 9 L2 4 L4.5 6 L6 3 L7.5 6 L10 4 L10 9 Z"/></svg>Simply Balanced</span></td>
+              </tr>
+              <tr>
+                <td class="metric">Profit‑Loss Ratio</td>
+                <td><span class="comp-num dim">n/a</span></td>
+                <td><span class="comp-num dim">n/a</span></td>
+                <td class="comp-cell-bal"><span class="comp-num">2.08</span></td>
+                <td class="comp-cell-lev"><span class="comp-num">1.65</span></td>
+                <td><span class="winner-tag bal"><svg class="crown" viewBox="0 0 12 12"><path d="M2 9 L2 4 L4.5 6 L6 3 L7.5 6 L10 4 L10 9 Z"/></svg>Simply Balanced</span></td>
+              </tr>
+              <tr>
+                <td class="metric">Alpha</td>
+                <td><span class="comp-num muted">−0.01</span></td>
+                <td><span class="comp-num muted">0.00</span></td>
+                <td class="comp-cell-bal"><span class="comp-num">0.11</span></td>
+                <td class="comp-cell-lev"><span class="comp-num">0.17</span></td>
+                <td><span class="winner-tag lev"><svg class="crown" viewBox="0 0 12 12"><path d="M2 9 L2 4 L4.5 6 L6 3 L7.5 6 L10 4 L10 9 Z"/></svg>Simply Leveraged</span></td>
+              </tr>
+              <tr>
+                <td class="metric">Beta</td>
+                <td><span class="comp-num muted">0.75</span></td>
+                <td><span class="comp-num muted">0.99</span></td>
+                <td class="comp-cell-bal"><span class="comp-num">0.55</span></td>
+                <td class="comp-cell-lev"><span class="comp-num">0.93</span></td>
+                <td><span class="winner-tag none">—</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="legend">
+        <div class="legend-item"><span class="legend-swatch" style="background:oklch(72% 0.18 155 / 0.25); border:1px solid oklch(72% 0.18 155 / 0.5);"></span> Simply Balanced (8 wins)</div>
+        <div class="legend-item"><span class="legend-swatch" style="background:oklch(55% 0.18 280 / 0.18); border:1px solid oklch(55% 0.18 280 / 0.5);"></span> Simply Leveraged (4 wins)</div>
+        <div class="legend-item">Highlighted columns show systematic SPS strategies vs benchmark buy &amp; hold.</div>
+      </div>
+
+      <div class="qc-ribbon">
+        <div class="qc-ribbon-icon">
+          <svg viewBox="0 0 24 24"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="14 7 21 7 21 14"/></svg>
+        </div>
+        <div class="qc-ribbon-text">
+          <strong>Backtest engine: QuantConnect</strong>
+          <span>Industry‑standard institutional research platform. Same fill model, slippage, and commissions across all four strategies for an apples‑to‑apples comparison.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Simply Balanced Result -->
+  <div class="section section-narrow">
+    <div class="section-label">Strategy 1 of 2</div>
+    <div class="result-block">
+      <div class="result-head">
+        <div class="result-head-left">
+          <div class="result-tag bal">Systematic · Balanced · Lower Drawdown</div>
+          <h3 class="result-name">Simply Balanced</h3>
+          <p class="result-tagline">Mixed leveraged + non‑leveraged ETFs. Total leverage held under 2x. Built to win on consistency, recovery speed, and risk‑adjusted return.</p>
+        </div>
+        <a class="result-c2-link" href="https://collective2.com/details/154543850" target="_blank" rel="noopener">View on C2 <svg viewBox="0 0 14 14"><line x1="2" y1="7" x2="12" y2="7"/><polyline points="8,3 12,7 8,11"/></svg></a>
+      </div>
+
+      <div class="stats-strip">
+        <div class="strip-stat">
+          <div class="strip-label">Net Profit</div>
+          <div class="strip-value green">1,075%</div>
+          <div class="strip-sub">$25K → $293,850</div>
+        </div>
+        <div class="strip-stat">
+          <div class="strip-label">CAGR</div>
+          <div class="strip-value green">27.61%</div>
+          <div class="strip-sub">Compounding annual</div>
+        </div>
+        <div class="strip-stat">
+          <div class="strip-label">Max Drawdown</div>
+          <div class="strip-value">21.90%</div>
+          <div class="strip-sub">Lowest of all four</div>
+        </div>
+        <div class="strip-stat">
+          <div class="strip-label">Sharpe Ratio</div>
+          <div class="strip-value green">1.01</div>
+          <div class="strip-sub">Above 1.0 — strong</div>
+        </div>
+      </div>
+
+      <div class="bt-shot-frame">
+        <div class="bt-shot-header">
+          <div class="bt-shot-header-left">
+            <div class="bt-shot-dots"><span class="bt-shot-dot r"></span><span class="bt-shot-dot y"></span><span class="bt-shot-dot g"></span></div>
+            <span style="color:oklch(70% 0.04 240); font-size:12px; font-family:'JetBrains Mono', monospace; margin-left:8px;">Balanced — Backtest Overview</span>
+          </div>
+          <div class="bt-shot-source"><span class="qc-dot"></span>QuantConnect · 2016–2025</div>
+        </div>
+        <img class="bt-shot-img" src="uploads/Balanced Backtest.png" alt="Simply Balanced backtest results overview from QuantConnect" />
+        <div class="bt-shot-caption">SOURCE: QUANTCONNECT BACKTEST OVERVIEW · 10‑YEAR PERIOD · UNMODIFIED SCREENSHOT</div>
+      </div>
+
+      <div class="highlight-row">
+        <div class="highlight-card">
+          <div class="highlight-icon green"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="highlight-title">73% Win Rate</div>
+          <p class="highlight-text">Nearly 3 in 4 trades close profitable. Profit‑Loss Ratio of 2.08 — winners are 2× larger than losers on average.</p>
+        </div>
+        <div class="highlight-card">
+          <div class="highlight-icon blue"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 11-9-9"/><polyline points="21 3 21 12 12 12"/></svg></div>
+          <div class="highlight-title">373‑day Recovery</div>
+          <p class="highlight-text">Worst drawdown was recovered in roughly half the time SPY and QQQ took. Compounding stays on schedule.</p>
+        </div>
+        <div class="highlight-card">
+          <div class="highlight-icon green"><svg viewBox="0 0 24 24"><polyline points="3 17 9 11 13 15 21 7"/></svg></div>
+          <div class="highlight-title">PSR 59.4%</div>
+          <p class="highlight-text">Probabilistic Sharpe — the likelihood the live Sharpe exceeds 0.5. Highest of all four strategies tested.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Simply Leveraged Result -->
+  <div class="section section-narrow" style="padding-top:0;">
+    <div class="section-label">Strategy 2 of 2</div>
+    <div class="result-block">
+      <div class="result-head">
+        <div class="result-head-left">
+          <div class="result-tag lev">Systematic · Higher Risk · Maximum Compounding</div>
+          <h3 class="result-name">Simply Leveraged</h3>
+          <p class="result-tagline">100% leveraged ETFs. Total leverage held under 3x. Built for compounding when momentum is strong — paired with systematic exits to cash during turbulence.</p>
+        </div>
+        <a class="result-c2-link" href="https://collective2.com/details/153931711" target="_blank" rel="noopener">View on C2 <svg viewBox="0 0 14 14"><line x1="2" y1="7" x2="12" y2="7"/><polyline points="8,3 12,7 8,11"/></svg></a>
+      </div>
+
+      <div class="stats-strip">
+        <div class="strip-stat">
+          <div class="strip-label">Net Profit</div>
+          <div class="strip-value purple">2,287%</div>
+          <div class="strip-sub">$25K → $596,745</div>
+        </div>
+        <div class="strip-stat">
+          <div class="strip-label">CAGR</div>
+          <div class="strip-value purple">36.87%</div>
+          <div class="strip-sub">Compounding annual</div>
+        </div>
+        <div class="strip-stat">
+          <div class="strip-label">Max Drawdown</div>
+          <div class="strip-value amber">41.00%</div>
+          <div class="strip-sub">Highest of all four</div>
+        </div>
+        <div class="strip-stat">
+          <div class="strip-label">Win Rate</div>
+          <div class="strip-value purple">67%</div>
+          <div class="strip-sub">P/L Ratio 1.65</div>
+        </div>
+      </div>
+
+      <div class="bt-shot-frame">
+        <div class="bt-shot-header">
+          <div class="bt-shot-header-left">
+            <div class="bt-shot-dots"><span class="bt-shot-dot r"></span><span class="bt-shot-dot y"></span><span class="bt-shot-dot g"></span></div>
+            <span style="color:oklch(70% 0.04 240); font-size:12px; font-family:'JetBrains Mono', monospace; margin-left:8px;">Leveraged — Backtest Overview</span>
+          </div>
+          <div class="bt-shot-source"><span class="qc-dot"></span>QuantConnect · 2016–2025</div>
+        </div>
+        <img class="bt-shot-img" src="uploads/Leveraged Backtest.png" alt="Simply Leveraged backtest results overview from QuantConnect" />
+        <div class="bt-shot-caption">SOURCE: QUANTCONNECT BACKTEST OVERVIEW · 10‑YEAR PERIOD · UNMODIFIED SCREENSHOT</div>
+      </div>
+
+      <div class="highlight-row">
+        <div class="highlight-card">
+          <div class="highlight-icon green"><svg viewBox="0 0 24 24"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="14 7 21 7 21 14"/></svg></div>
+          <div class="highlight-title">23.8× Starting Capital</div>
+          <p class="highlight-text">$25,000 grew to ~$596,000 over 10 years in the backtest — roughly 4× what QQQ buy‑and‑hold returned in the same window.</p>
+        </div>
+        <div class="highlight-card">
+          <div class="highlight-icon amber"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+          <div class="highlight-title">41% Max Drawdown</div>
+          <p class="highlight-text">The trade‑off: largest peak‑to‑trough drop of any strategy here. Only run this with capital you're committed to a multi‑year horizon.</p>
+        </div>
+        <div class="highlight-card">
+          <div class="highlight-icon green"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+          <div class="highlight-title">Alpha 0.17</div>
+          <p class="highlight-text">Highest excess return vs benchmark of all four — the systematic momentum + exit rules generated returns the market itself didn't.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Benchmark backtests -->
+  <div class="bench-section">
+    <div class="section section-narrow">
+      <div class="section-label">Benchmark Reference</div>
+      <h2>SPY &amp; QQQ Buy &amp; Hold — same window, same engine</h2>
+      <p class="lede">For an apples‑to‑apples comparison, here are the same two passive benchmarks run through QuantConnect over the identical 10‑year window with the same starting equity.</p>
+
+      <div class="bench-grid">
+        <!-- SPY -->
+        <div class="bench-card">
+          <div class="bench-card-head">
+            <div>
+              <div class="bench-card-title">SPY · Buy &amp; Hold</div>
+              <div class="bench-card-subtitle">S&amp;P 500 ETF — single position held for 10 years</div>
+            </div>
+            <span class="result-tag bench" style="margin-bottom:0;">Benchmark</span>
+          </div>
+          <div class="bench-mini-stats">
+            <div class="bench-mini">
+              <div class="bench-mini-label">Net Profit</div>
+              <div class="bench-mini-value">295.4%</div>
+            </div>
+            <div class="bench-mini">
+              <div class="bench-mini-label">CAGR</div>
+              <div class="bench-mini-value">14.57%</div>
+            </div>
+            <div class="bench-mini">
+              <div class="bench-mini-label">Max DD</div>
+              <div class="bench-mini-value">33.40%</div>
+            </div>
+          </div>
+          <div class="bt-shot-frame">
+            <div class="bt-shot-header">
+              <div class="bt-shot-header-left">
+                <div class="bt-shot-dots"><span class="bt-shot-dot r"></span><span class="bt-shot-dot y"></span><span class="bt-shot-dot g"></span></div>
+                <span style="color:oklch(70% 0.04 240); font-size:12px; font-family:'JetBrains Mono', monospace; margin-left:8px;">SPY — Buy &amp; Hold</span>
+              </div>
+              <div class="bt-shot-source"><span class="qc-dot"></span>QuantConnect</div>
+            </div>
+            <img class="bt-shot-img" src="uploads/SPY Backtest.png" alt="SPY buy and hold backtest from QuantConnect" />
+          </div>
+        </div>
+
+        <!-- QQQ -->
+        <div class="bench-card">
+          <div class="bench-card-head">
+            <div>
+              <div class="bench-card-title">QQQ · Buy &amp; Hold</div>
+              <div class="bench-card-subtitle">Nasdaq‑100 ETF — single position held for 10 years</div>
+            </div>
+            <span class="result-tag bench" style="margin-bottom:0;">Benchmark</span>
+          </div>
+          <div class="bench-mini-stats">
+            <div class="bench-mini">
+              <div class="bench-mini-label">Net Profit</div>
+              <div class="bench-mini-value">478.9%</div>
+            </div>
+            <div class="bench-mini">
+              <div class="bench-mini-label">CAGR</div>
+              <div class="bench-mini-value">18.97%</div>
+            </div>
+            <div class="bench-mini">
+              <div class="bench-mini-label">Max DD</div>
+              <div class="bench-mini-value">35.00%</div>
+            </div>
+          </div>
+          <div class="bt-shot-frame">
+            <div class="bt-shot-header">
+              <div class="bt-shot-header-left">
+                <div class="bt-shot-dots"><span class="bt-shot-dot r"></span><span class="bt-shot-dot y"></span><span class="bt-shot-dot g"></span></div>
+                <span style="color:oklch(70% 0.04 240); font-size:12px; font-family:'JetBrains Mono', monospace; margin-left:8px;">QQQ — Buy &amp; Hold</span>
+              </div>
+              <div class="bt-shot-source"><span class="qc-dot"></span>QuantConnect</div>
+            </div>
+            <img class="bt-shot-img" src="uploads/QQQ Backtest.png" alt="QQQ buy and hold backtest from QuantConnect" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Methodology -->
+  <div class="section section-narrow">
+    <div class="section-label">Methodology</div>
+    <h2>How the backtests were run</h2>
+    <p class="lede">No cherry‑picked dates. No survivorship bias. No selective metric reporting. Same engine and assumptions across all four strategies.</p>
+
+    <div class="method-grid">
+      <div class="method-card">
+        <div class="method-num">01</div>
+        <div class="method-title">Identical period</div>
+        <p class="method-text">All four strategies tested over the same January 2016 – December 2025 window — through the 2018 correction, COVID crash, 2022 bear market, and the rallies between.</p>
+      </div>
+      <div class="method-card">
+        <div class="method-num">02</div>
+        <div class="method-title">Same starting equity</div>
+        <p class="method-text">$25,000 in every test. Apples‑to‑apples ending equity, profit, and drawdown comparisons.</p>
+      </div>
+      <div class="method-card">
+        <div class="method-num">03</div>
+        <div class="method-title">QuantConnect engine</div>
+        <p class="method-text">Institutional‑grade backtest platform with realistic fills, slippage, and commissions. Same broker model used for benchmarks and strategies.</p>
+      </div>
+      <div class="method-card">
+        <div class="method-num">04</div>
+        <div class="method-title">Reported as run</div>
+        <p class="method-text">All numbers shown above are taken directly from the QuantConnect overview pages. Screenshots are unmodified.</p>
+      </div>
+    </div>
+
+    <div class="disclaimer-block">
+      <strong>⚠ Important — read before subscribing</strong>
+      <p>Backtested results are <strong style="color:inherit;">simulated</strong>. They reflect how the strategy would have performed historically using current rules — not actual live trading. Past performance does not guarantee future results, and live results will differ from backtests due to slippage, fills, real‑world events, and rule refinements. Leveraged ETFs carry compounding risks including decay in sideways markets. Only invest capital you can commit to a multi‑year horizon and afford to see drawn down significantly. Consult a qualified financial advisor before subscribing.</p>
+    </div>
+  </div>
+
+  <!-- Final CTA -->
+  <div class="final-cta">
+    <div class="final-cta-inner">
+      <div class="section-label" style="justify-content:center; color: var(--blue-mid);">What's Next</div>
+      <h2>See the live track record →</h2>
+      <p>Backtests show the design. The Collective2 listings show the live fills, in real time, going forward.</p>
+      <div class="hero-ctas">
+        <a class="btn-primary" href="investment-strategies.html#strategies">Browse Strategies →</a>
+        <a class="btn-secondary" href="investment-strategies.html#how-it-works">How It Works</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-top">
+      <a class="logo" href="index.html">
+        <img src="uploads/website_logo_transparent_background.png" alt="Simple Portfolio Service" style="height:40px;width:auto;display:block;" />
+      </a>
+      <div class="footer-links">
+        <a href="index.html">Home</a>
+        <a href="investment-strategies.html">Strategies</a>
+        <a href="privacy-policy.html">Privacy Policy</a>
+        <a href="terms-of-use.html">Terms of Use</a>
+        <a href="https://twitter.com/SimplePortfoli1" target="_blank" rel="noopener">Twitter</a>
+      </div>
+    </div>
+    <p class="footer-disclaimer">Simple Portfolio Service (SPS) is a Collective2 signal provider, not a registered investment advisor (RIA), broker-dealer, or financial planner. Information presented is educational and reflects the strategy owner's personal trading methodology. It does not constitute personalized investment, legal, or tax advice. Trading involves substantial risk of loss and is not suitable for all investors. Backtested results are simulated and do not reflect live trading. Leveraged ETFs carry additional risks, including amplified losses and decay in sideways markets. Past performance does not guarantee future results. All performance figures cited are sourced from QuantConnect backtests over the period January 2016 – December 2025. Consult a qualified financial advisor before making investment decisions.<br/><br/>© 2026 Simple Portfolio Service. All rights reserved.</p>
+  </footer>
+
+  <script src="theme.js"></script>
+</body>
+</html>

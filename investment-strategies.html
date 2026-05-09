@@ -1033,7 +1033,7 @@
       <h1>Momentum-driven portfolios.<br/>Auto-traded in <em>your</em> brokerage account.</h1>
       <p class="hero-sub">Three systematic strategies built on 20+ years of market experience. Subscribe on Collective2, connect your broker, and trades replicate automatically — your money never leaves your account.</p>
       <div class="hero-ctas">
-        <a class="btn-primary" href="#performance">View Live Performance →</a>
+        <a class="btn-primary" href="#strategies">View Strategies →</a>
         <a class="btn-secondary" href="#how-it-works">How It Works</a>
       </div>
       <p class="hero-trust">Verified on Collective2 · Live track record · Your capital, your control</p>
@@ -1081,7 +1081,7 @@
           </li>
           <li>
             <div class="check-icon"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
-            <span><strong>Low leverage discipline.</strong> Cash-basis stock strategies; ETF-only leverage capped at 3x. No margin calls.</span>
+            <span><strong>Three risk profiles.</strong> ~1x leverage (Strategic: Stocks), ~2x leverage (Balanced: mix of leveraged and non-leveraged ETFs), or ~3x leverage (Leveraged: leveraged ETFs). No account margin — pick your appetite.</span>
           </li>
           <li>
             <div class="check-icon"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
@@ -1090,135 +1090,6 @@
         </ul>
       </div>
     </div>
-  </div>
-
-  <hr class="divider" />
-
-  <!-- Live Performance -->
-  <div class="section" id="performance">
-    <div class="section-label">Live Performance</div>
-    <h2>Real trades. Real accounts. Real results.</h2>
-    <p>All results are post-fee, post-slippage, executed in real brokerage accounts. Past performance does not guarantee future results.</p>
-
-    <div class="perf-grid">
-      <div class="perf-card perf-card--leveraged" id="backtest">
-        <div class="perf-rank">Top 8% on C2 · Rank #94</div>
-        <div class="perf-name">Simply Leveraged</div>
-        <div class="perf-type">Systematic · Live since Dec 2025</div>
-        <div class="perf-stats">
-          <div class="perf-stat"><span class="stat-label">Sharpe Ratio</span><span class="stat-value">1.20</span></div>
-          <div class="perf-stat"><span class="stat-label">Sortino Ratio</span><span class="stat-value">1.65</span></div>
-          <div class="perf-stat"><span class="stat-label">% Profitable</span><span class="stat-value">33.3% <span style="font-size:12px;font-weight:400;color:var(--text-sub)">/ 15 trades</span></span></div>
-          <div class="perf-stat"><span class="stat-label">Alpha</span><span class="stat-value">0.12</span></div>
-          <div class="perf-stat"><span class="stat-label">Min Capital</span><span class="stat-value">$15,000</span></div>
-        </div>
-        <a class="perf-cta" href="https://collective2.com/details/153931711" target="_blank" rel="noopener">View on Collective2 <svg viewBox="0 0 14 14"><line x1="2" y1="7" x2="12" y2="7"/><polyline points="8,3 12,7 8,11"/></svg></a>
-
-        <!-- Backtest accordion -->
-        <div class="bt-accordion-divider"></div>
-        <button class="bt-accordion-trigger" onclick="toggleBacktest(this)" aria-expanded="false">
-          <div class="bt-accordion-trigger-left">
-            <span class="bt-accordion-pill">
-              <svg viewBox="0 0 13 13" style="width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;"><circle cx="6.5" cy="6.5" r="5"/><line x1="6.5" y1="4.5" x2="6.5" y2="6.5"/><circle cx="6.5" cy="8.5" r="0.5" fill="currentColor" stroke="none"/></svg>
-              Simulated · Not live
-            </span>
-            <span class="bt-accordion-label">5-Year Backtest <span class="bt-accordion-hint">$25K → $190K · 660% return</span></span>
-          </div>
-          <svg class="bt-accordion-chevron" viewBox="0 0 14 14"><polyline points="3,5 7,9 11,5"/></svg>
-        </button>
-
-        <div class="bt-accordion-body" hidden>
-          <!-- Mini hero stats -->
-          <div class="bt-mini-stats">
-            <div class="bt-mini-stat">
-              <div class="bt-mini-label">Net Return</div>
-              <div class="bt-mini-value positive">660%</div>
-            </div>
-            <div class="bt-mini-stat">
-              <div class="bt-mini-label">CAGR</div>
-              <div class="bt-mini-value positive">47.2%</div>
-            </div>
-            <div class="bt-mini-stat">
-              <div class="bt-mini-label">Win Rate</div>
-              <div class="bt-mini-value">68%</div>
-            </div>
-            <div class="bt-mini-stat">
-              <div class="bt-mini-label">Sharpe</div>
-              <div class="bt-mini-value">1.00</div>
-            </div>
-            <div class="bt-mini-stat">
-              <div class="bt-mini-label">Max DD</div>
-              <div class="bt-mini-value negative">−41%</div>
-            </div>
-          </div>
-
-          <!-- Equity curve -->
-          <div class="bt-chart-wrap">
-            <img src="uploads/5 Year Back Test Results.png" alt="Simply Leveraged 5-year backtest equity curve 2021–2026" />
-            <div class="bt-chart-caption">Strategy equity curve · 2021–2026 · Simulated on historical data</div>
-          </div>
-
-          <!-- Full stats grid -->
-          <div class="bt-full-stats">
-            <div class="bt-fs-col">
-              <div class="bt-fs-group-label">Returns</div>
-              <div class="bt-fs-row"><span>Net Profit</span><span class="highlight">660.02%</span></div>
-              <div class="bt-fs-row"><span>CAGR</span><span class="positive">47.201%</span></div>
-              <div class="bt-fs-row"><span>Start Equity</span><span>$25,000</span></div>
-              <div class="bt-fs-row"><span>End Equity</span><span class="positive">$190,005</span></div>
-              <div class="bt-fs-group-label" style="margin-top:12px;">Trades</div>
-              <div class="bt-fs-row"><span>Total Orders</span><span>144</span></div>
-              <div class="bt-fs-row"><span>Win Rate</span><span class="positive">68%</span></div>
-              <div class="bt-fs-row"><span>Avg Win</span><span class="positive">+9.58%</span></div>
-              <div class="bt-fs-row"><span>Avg Loss</span><span class="negative">−5.75%</span></div>
-              <div class="bt-fs-row"><span>P/L Ratio</span><span>1.67×</span></div>
-            </div>
-            <div class="bt-fs-col">
-              <div class="bt-fs-group-label">Risk</div>
-              <div class="bt-fs-row"><span>Max Drawdown</span><span class="negative">41.0%</span></div>
-              <div class="bt-fs-row"><span>Annual Std Dev</span><span>0.355</span></div>
-              <div class="bt-fs-row"><span>Beta</span><span>1.115</span></div>
-              <div class="bt-fs-row"><span>Annual Variance</span><span>0.126</span></div>
-              <div class="bt-fs-group-label" style="margin-top:12px;">Quality</div>
-              <div class="bt-fs-row"><span>Sharpe Ratio</span><span class="highlight">1.001</span></div>
-              <div class="bt-fs-row"><span>Sortino Ratio</span><span class="highlight">1.038</span></div>
-              <div class="bt-fs-row"><span>Alpha</span><span class="positive">0.235</span></div>
-              <div class="bt-fs-row"><span>PSR</span><span>42.472%</span></div>
-              <div class="bt-fs-row"><span>Expectancy</span><span>0.817</span></div>
-            </div>
-          </div>
-
-          <p class="bt-footer-note">Simulated on historical data 2021–2026 using the same entry/exit rules as the live strategy. The 41% max drawdown is real — this is a volatile strategy. Past simulated performance does not guarantee future results.</p>
-        </div>
-      </div>
-      <div class="perf-card">
-        <div class="perf-rank">Top 8% on C2 · Rank #289</div>
-        <div class="perf-name">Simply Long</div>
-        <div class="perf-type">Systematic · Live since Feb 2026</div>
-        <div class="perf-stats">
-          <div class="perf-stat"><span class="stat-label">Sharpe Ratio</span><span class="stat-value">0.59</span></div>
-          <div class="perf-stat"><span class="stat-label">Sortino Ratio</span><span class="stat-value">0.91</span></div>
-          <div class="perf-stat"><span class="stat-label">% Profitable</span><span class="stat-value">51.1% <span style="font-size:12px;font-weight:400;color:var(--text-sub)">/ 45 trades</span></span></div>
-          <div class="perf-stat"><span class="stat-label">Alpha</span><span class="stat-value">0.03</span></div>
-          <div class="perf-stat"><span class="stat-label">Min Capital</span><span class="stat-value">$5,000</span></div>
-        </div>
-        <a class="perf-cta" href="https://collective2.com/details/154543850" target="_blank" rel="noopener">View on Collective2 <svg viewBox="0 0 14 14"><line x1="2" y1="7" x2="12" y2="7"/><polyline points="8,3 12,7 8,11"/></svg></a>
-      </div>
-      <div class="perf-card">
-        <div class="perf-rank">Top 6.3% on C2 · Rank #39</div>
-        <div class="perf-name">Simply Strategic</div>
-        <div class="perf-type">Active Picks · Live since Dec 2024</div>
-        <div class="perf-stats">
-          <div class="perf-stat"><span class="stat-label">Sharpe Ratio</span><span class="stat-value">0.70</span></div>
-          <div class="perf-stat"><span class="stat-label">Sortino Ratio</span><span class="stat-value">1.02</span></div>
-          <div class="perf-stat"><span class="stat-label">% Profitable</span><span class="stat-value">42.2% <span style="font-size:12px;font-weight:400;color:var(--text-sub)">/ 64 trades</span></span></div>
-          <div class="perf-stat"><span class="stat-label">Alpha</span><span class="stat-value">0.08</span></div>
-          <div class="perf-stat"><span class="stat-label">Min Capital</span><span class="stat-value">$15,000</span></div>
-        </div>
-        <a class="perf-cta" href="https://collective2.com/details/150306316" target="_blank" rel="noopener">View on Collective2 <svg viewBox="0 0 14 14"><line x1="2" y1="7" x2="12" y2="7"/><polyline points="8,3 12,7 8,11"/></svg></a>
-      </div>
-    </div>
-    <p class="perf-disclaimer">All results sourced from Collective2. Past performance does not guarantee future results. Data as of April 2026.</p>
   </div>
 
   <hr class="divider" />
@@ -1240,19 +1111,19 @@
         </thead>
         <tbody>
           <tr>
-            <td>Simply Long</td>
-            <td>Under 1x</td>
-            <td>No margin — cash-basis stock positions</td>
-          </tr>
-          <tr>
             <td>Simply Strategic</td>
             <td>Under 1x</td>
             <td>No margin — cash-basis stock positions</td>
           </tr>
           <tr>
+            <td>Simply Balanced</td>
+            <td>Under 2x</td>
+            <td>Mixed leveraged + non-leveraged ETFs — leverage built into select ETFs only</td>
+          </tr>
+          <tr>
             <td>Simply Leveraged</td>
-            <td>Up to 3x</td>
-            <td>Built into the ETFs (TQQQ, SOXL, etc.) — no account margin</td>
+            <td>Under 3x</td>
+            <td>100% leveraged ETFs (TQQQ, SOXL, etc.) — no account margin</td>
           </tr>
         </tbody>
       </table>
@@ -1279,62 +1150,69 @@
     <div class="section-label">The Three Products</div>
     <h2>Pick the strategy that fits you.</h2>
 
+    <p style="margin-top:-4px;">Three strategies, one engine, three risk profiles. Pick the one that matches your risk appetite — or combine them.</p>
     <div class="strategy-stack">
 
-      <!-- Simply Leveraged -->
+      <!-- Simply Strategic (lowest risk) -->
       <div class="strategy-card">
         <div class="strategy-header">
           <div>
-            <div class="strategy-badge badge-systematic">Systematic</div>
-            <div class="strategy-name">Simply Leveraged</div>
-            <div class="strategy-tagline">3–4 leveraged ETFs riding the strongest momentum. Concentrated positions in 2x and 3x ETFs (TQQQ, SOXL, FNGU, FAS, and similar). Aggressive upside in trending markets, with systematic exits to cash during turbulence.</div>
-          </div>
-          <a class="strategy-link" href="https://collective2.com/details/153931711" target="_blank" rel="noopener">View on C2 <svg viewBox="0 0 14 14"><line x1="2" y1="7" x2="12" y2="7"/><polyline points="8,3 12,7 8,11"/></svg></a>
-        </div>
-        <div class="strategy-meta">
-          <div class="meta-item"><div class="meta-label">Holdings</div><div class="meta-value">3–4 Leveraged ETFs</div></div>
-          <div class="meta-item"><div class="meta-label">Leverage</div><div class="meta-value">Up to 3x (ETFs)</div></div>
-          <div class="meta-item"><div class="meta-label">Best For</div><div class="meta-value">Aggressive growth, $10K+</div></div>
-          <div class="meta-item"><div class="meta-label">Trade Frequency</div><div class="meta-value">Weekly to monthly</div></div>
-          <div class="meta-item"><div class="meta-label">Risk Level</div><div class="meta-value">High</div></div>
-        </div>
-      </div>
-
-      <!-- Simply Long -->
-      <div class="strategy-card">
-        <div class="strategy-header">
-          <div>
-            <div class="strategy-badge badge-systematic">Systematic</div>
-            <div class="strategy-name">Simply Long</div>
-            <div class="strategy-tagline">18–20 high-momentum stocks across leading sectors. A diversified momentum portfolio of fast-moving individual stocks. Same systematic engine as Simply Leveraged — no leverage, broader diversification.</div>
-          </div>
-          <a class="strategy-link" href="https://collective2.com/details/154543850" target="_blank" rel="noopener">View on C2 <svg viewBox="0 0 14 14"><line x1="2" y1="7" x2="12" y2="7"/><polyline points="8,3 12,7 8,11"/></svg></a>
-        </div>
-        <div class="strategy-meta">
-          <div class="meta-item"><div class="meta-label">Holdings</div><div class="meta-value">18–20 Stocks</div></div>
-          <div class="meta-item"><div class="meta-label">Leverage</div><div class="meta-value">Under 1x (no margin)</div></div>
-          <div class="meta-item"><div class="meta-label">Best For</div><div class="meta-value">Growth investors, $5K+</div></div>
-          <div class="meta-item"><div class="meta-label">Trade Frequency</div><div class="meta-value">Weekly to monthly</div></div>
-          <div class="meta-item"><div class="meta-label">Risk Level</div><div class="meta-value">Moderate to High</div></div>
-        </div>
-      </div>
-
-      <!-- Simply Strategic -->
-      <div class="strategy-card">
-        <div class="strategy-header">
-          <div>
-            <div class="strategy-badge badge-active">Active Picks</div>
+            <div class="strategy-badge badge-active">Active Picks · Lower Risk</div>
             <div class="strategy-name">Simply Strategic</div>
-            <div class="strategy-tagline">~20 conviction trades curated from active research. Where Leveraged and Long are 100% rules-based, Simply Strategic blends momentum signals with hands-on research and market judgment.</div>
+            <div class="strategy-tagline">~20 conviction stock trades curated from active research. 100% individual stocks, total leverage under 1x — no margin, no leveraged ETFs. Blends momentum signals with hands-on research and market judgment.</div>
           </div>
           <a class="strategy-link" href="https://collective2.com/details/150306316" target="_blank" rel="noopener">View on C2 <svg viewBox="0 0 14 14"><line x1="2" y1="7" x2="12" y2="7"/><polyline points="8,3 12,7 8,11"/></svg></a>
         </div>
         <div class="strategy-meta">
           <div class="meta-item"><div class="meta-label">Holdings</div><div class="meta-value">~20 Stocks</div></div>
           <div class="meta-item"><div class="meta-label">Leverage</div><div class="meta-value">Under 1x (no margin)</div></div>
-          <div class="meta-item"><div class="meta-label">Best For</div><div class="meta-value">Researcher's picks, $5K+</div></div>
+          <div class="meta-item"><div class="meta-label">Best For</div><div class="meta-value">Conservative growth, $15K+</div></div>
           <div class="meta-item"><div class="meta-label">Trade Frequency</div><div class="meta-value">Variable</div></div>
+          <div class="meta-item"><div class="meta-label">Risk Level</div><div class="meta-value">Moderate</div></div>
+        </div>
+      </div>
+
+      <!-- Simply Balanced (middle risk) -->
+      <div class="strategy-card">
+        <div class="strategy-header">
+          <div>
+            <div class="strategy-badge badge-systematic">Systematic · Balanced</div>
+            <div class="strategy-name">Simply Balanced</div>
+            <div class="strategy-tagline">A blend of leveraged and non-leveraged ETFs that holds total portfolio leverage under 2x. The middle ground — meaningful upside in trending markets, but with the dampening effect of unleveraged broad-market ETFs to soften drawdowns.</div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:8px; align-items:flex-end;">
+            <a class="strategy-link" href="https://collective2.com/details/154543850" target="_blank" rel="noopener">View on C2 <svg viewBox="0 0 14 14"><line x1="2" y1="7" x2="12" y2="7"/><polyline points="8,3 12,7 8,11"/></svg></a>
+            <a class="strategy-link" href="Strategies-backtesting.html" style="background:transparent; color:var(--blue); border:1.5px solid var(--blue);">Back Testing Results <svg viewBox="0 0 14 14"><line x1="2" y1="7" x2="12" y2="7"/><polyline points="8,3 12,7 8,11"/></svg></a>
+          </div>
+        </div>
+        <div class="strategy-meta">
+          <div class="meta-item"><div class="meta-label">Holdings</div><div class="meta-value">Mixed ETFs (leveraged + non-leveraged)</div></div>
+          <div class="meta-item"><div class="meta-label">Leverage</div><div class="meta-value">Under 2x (ETFs)</div></div>
+          <div class="meta-item"><div class="meta-label">Best For</div><div class="meta-value">Balanced growth, $10K+</div></div>
+          <div class="meta-item"><div class="meta-label">Trade Frequency</div><div class="meta-value">Weekly to monthly</div></div>
           <div class="meta-item"><div class="meta-label">Risk Level</div><div class="meta-value">Moderate to High</div></div>
+        </div>
+      </div>
+
+      <!-- Simply Leveraged (highest risk) -->
+      <div class="strategy-card">
+        <div class="strategy-header">
+          <div>
+            <div class="strategy-badge badge-systematic">Systematic · Higher Risk</div>
+            <div class="strategy-name">Simply Leveraged</div>
+            <div class="strategy-tagline">100% leveraged ETFs riding the strongest momentum. Concentrated positions in 2x and 3x ETFs (TQQQ, SOXL, FNGU, FAS, and similar) with total portfolio leverage under 3x. Aggressive upside, systematic exits to cash during turbulence.</div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:8px; align-items:flex-end;">
+            <a class="strategy-link" href="https://collective2.com/details/153931711" target="_blank" rel="noopener">View on C2 <svg viewBox="0 0 14 14"><line x1="2" y1="7" x2="12" y2="7"/><polyline points="8,3 12,7 8,11"/></svg></a>
+            <a class="strategy-link" href="Strategies-backtesting.html" style="background:transparent; color:var(--blue); border:1.5px solid var(--blue);">Back Testing Results <svg viewBox="0 0 14 14"><line x1="2" y1="7" x2="12" y2="7"/><polyline points="8,3 12,7 8,11"/></svg></a>
+          </div>
+        </div>
+        <div class="strategy-meta">
+          <div class="meta-item"><div class="meta-label">Holdings</div><div class="meta-value">3–4 Leveraged ETFs</div></div>
+          <div class="meta-item"><div class="meta-label">Leverage</div><div class="meta-value">Under 3x (ETFs)</div></div>
+          <div class="meta-item"><div class="meta-label">Best For</div><div class="meta-value">Aggressive growth, $10K+</div></div>
+          <div class="meta-item"><div class="meta-label">Trade Frequency</div><div class="meta-value">Weekly to monthly</div></div>
+          <div class="meta-item"><div class="meta-label">Risk Level</div><div class="meta-value">High</div></div>
         </div>
       </div>
 
@@ -1428,9 +1306,8 @@
     <div class="about-block">
       <div class="about-avatar">SPS</div>
       <div>
-        <p>I'm a Data &amp; Analytics leader at one of the Big 4 technology companies, with 20+ years of investing experience across global markets. SPS is a personal initiative — built on my own time, with my own capital running every systematic strategy alongside subscribers.</p>
-        <p>The strategies took years of research, backtesting, and live refinement to develop. The goal was simple: build something I'd be willing to run with my own money — and let others replicate it transparently.</p>
-        <p style="font-size:13px; margin-top:16px;">This service is not affiliated with or endorsed by my employer.</p>
+        <p>I have 20+ years of investing experience across global markets. SPS is a personal initiative — developed on my own time, funded with my own capital, and running systematic strategy myself alongside subscribers.</p>
+        <p>Each strategy is the product of years of research, rigorous backtesting, and live refinement. The goal was simple: build something I would trust with my own money — and make it transparent enough for others to replicate.</p>
       </div>
     </div>
   </div>
@@ -1458,7 +1335,7 @@
         </div>
         <div class="faq-item">
           <button class="faq-q" onclick="toggleFaq(this)">Do you trade these strategies yourself? <svg viewBox="0 0 18 18"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg></button>
-          <div class="faq-a"><p>Yes — both systematic strategies (Simply Leveraged and Simply Long) run in my personal accounts in parallel with the published signals.</p></div>
+          <div class="faq-a"><p>Yes — both systematic strategies (Simply Leveraged and Simply Balanced) run in my personal accounts in parallel with the published signals.</p></div>
         </div>
         <div class="faq-item">
           <button class="faq-q" onclick="toggleFaq(this)">How often do trades happen? <svg viewBox="0 0 18 18"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg></button>
@@ -1484,7 +1361,7 @@
       <p>Start with the strategy that fits your risk profile. Monthly subscription, cancel anytime, your money stays in your account.</p>
       <div class="hero-ctas">
         <a class="btn-primary" href="#strategies">Browse Strategies →</a>
-        <a class="btn-secondary" href="#performance">See Live Performance</a>
+        <a class="btn-secondary" href="#how-it-works">How It Works</a>
       </div>
     </div>
   </div>
