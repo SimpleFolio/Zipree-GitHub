@@ -1,31 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Fastrek — A Simple Strategy Game for Kids</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
-    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #f7f8f5;
-      --surface: #ffffff;
-      --border: #e4e8df;
-      --text-main: #111827;
-      --text-sub: #4b5563;
-      --green: oklch(52% 0.18 240);
-      --green-mid: oklch(64% 0.16 240);
+      --bg:          #f7f8f5;
+      --surface:     #ffffff;
+      --border:      #e4e8df;
+      --text-main:   #111827;
+      --text-sub:    #4b5563;
+      --green:       oklch(52% 0.18 240);
+      --green-mid:   oklch(64% 0.16 240);
       --green-light: oklch(94% 0.05 240);
     }
 
@@ -57,33 +49,15 @@
       gap: 10px;
       text-decoration: none;
     }
-
     .logo-mark {
-      width: 36px;
-      height: 36px;
+      width: 36px; height: 36px;
       background: var(--green);
       border-radius: 9px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
     }
-
-    .logo-mark svg {
-      width: 20px;
-      height: 20px;
-      fill: white;
-    }
-
-    .logo-name {
-      font-size: 20px;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-      color: var(--text-main);
-    }
-
-    .logo-name span {
-      color: var(--green);
-    }
+    .logo-mark svg { width: 20px; height: 20px; fill: white; }
+    .logo-name { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; color: var(--text-main); }
+    .logo-name span { color: var(--green); }
 
     .back-link {
       display: flex;
@@ -95,20 +69,8 @@
       text-decoration: none;
       transition: color 0.2s;
     }
-
-    .back-link:hover {
-      color: var(--text-main);
-    }
-
-    .back-link svg {
-      width: 16px;
-      height: 16px;
-      stroke: currentColor;
-      fill: none;
-      stroke-width: 2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
+    .back-link:hover { color: var(--text-main); }
+    .back-link svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
     /* ── Hero Banner ── */
     .page-hero {
@@ -129,14 +91,7 @@
       background: radial-gradient(ellipse at 70% 50%, oklch(52% 0.18 240 / 0.25) 0%, transparent 65%);
     }
 
-    .hero-text {
-      flex: 1;
-      position: relative;
-      z-index: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-    }
+    .hero-text { flex: 1; position: relative; z-index: 1; display: flex; flex-direction: column; gap: 0; }
 
     .hero-tag {
       display: inline-flex;
@@ -161,10 +116,7 @@
       margin-bottom: 24px;
     }
 
-    .page-hero h1 em {
-      font-style: normal;
-      color: var(--green-mid);
-    }
+    .page-hero h1 em { font-style: normal; color: var(--green-mid); }
 
     .page-hero p {
       font-size: 18px;
@@ -187,33 +139,25 @@
       text-decoration: none;
       transition: opacity 0.2s, transform 0.2s;
     }
-
-    .hero-cta:hover {
-      opacity: 0.9;
-      transform: translateY(-2px);
-    }
-
-    .hero-cta svg {
-      width: 18px;
-      height: 18px;
-      fill: currentColor;
-    }
+    .hero-cta:hover { opacity: 0.9; transform: translateY(-2px); }
+    .hero-cta svg { width: 18px; height: 18px; fill: currentColor; }
 
     .hero-image-wrap {
       flex: 0 0 380px;
       position: relative;
       z-index: 1;
     }
-
     .hero-image-placeholder {
       width: 100%;
       aspect-ratio: 1;
       border-radius: 24px;
-      background: repeating-linear-gradient(45deg,
-          oklch(25% 0.04 240) 0px,
-          oklch(25% 0.04 240) 1px,
-          oklch(20% 0.03 240) 1px,
-          oklch(20% 0.03 240) 18px);
+      background: repeating-linear-gradient(
+        45deg,
+        oklch(25% 0.04 240) 0px,
+        oklch(25% 0.04 240) 1px,
+        oklch(20% 0.03 240) 1px,
+        oklch(20% 0.03 240) 18px
+      );
       display: flex;
       align-items: center;
       justify-content: center;
@@ -234,9 +178,7 @@
       padding: 72px 48px;
     }
 
-    section {
-      margin-bottom: 72px;
-    }
+    section { margin-bottom: 72px; }
 
     .section-label {
       display: inline-flex;
@@ -249,7 +191,6 @@
       text-transform: uppercase;
       margin-bottom: 16px;
     }
-
     .section-label::before {
       content: '';
       display: block;
@@ -267,16 +208,8 @@
       margin-bottom: 20px;
     }
 
-    p {
-      font-size: 17px;
-      line-height: 1.75;
-      color: var(--text-sub);
-      margin-bottom: 16px;
-    }
-
-    p:last-child {
-      margin-bottom: 0;
-    }
+    p { font-size: 17px; line-height: 1.75; color: var(--text-sub); margin-bottom: 16px; }
+    p:last-child { margin-bottom: 0; }
 
     /* ── Feature Grid ── */
     .feature-grid {
@@ -294,37 +227,16 @@
     }
 
     .feature-icon {
-      width: 44px;
-      height: 44px;
+      width: 44px; height: 44px;
       background: var(--green-light);
       border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       margin-bottom: 16px;
     }
+    .feature-icon svg { width: 22px; height: 22px; stroke: var(--green); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
-    .feature-icon svg {
-      width: 22px;
-      height: 22px;
-      stroke: var(--green);
-      fill: none;
-      stroke-width: 2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
-
-    .feature-title {
-      font-size: 16px;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-
-    .feature-desc {
-      font-size: 14px;
-      color: var(--text-sub);
-      line-height: 1.6;
-    }
+    .feature-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+    .feature-desc { font-size: 14px; color: var(--text-sub); line-height: 1.6; }
 
     /* ── Video Links ── */
     .video-grid {
@@ -343,59 +255,31 @@
       color: var(--text-main);
       transition: border-color 0.2s, box-shadow 0.2s;
     }
-
-    .video-card:hover {
-      border-color: var(--green);
-      box-shadow: 0 6px 24px oklch(52% 0.18 240 / 0.12);
-    }
+    .video-card:hover { border-color: var(--green); box-shadow: 0 6px 24px oklch(52% 0.18 240 / 0.12); }
 
     .video-thumb {
       width: 100%;
       aspect-ratio: 16/9;
-      background: repeating-linear-gradient(135deg,
-          #f0f2ed 0px, #f0f2ed 1px,
-          #e8ebe4 1px, #e8ebe4 18px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      background: repeating-linear-gradient(
+        135deg,
+        #f0f2ed 0px, #f0f2ed 1px,
+        #e8ebe4 1px, #e8ebe4 18px
+      );
+      display: flex; align-items: center; justify-content: center;
       position: relative;
     }
-
     .play-btn {
-      width: 52px;
-      height: 52px;
+      width: 52px; height: 52px;
       background: var(--green);
       border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       box-shadow: 0 4px 16px oklch(52% 0.18 240 / 0.4);
     }
+    .play-btn svg { width: 20px; height: 20px; fill: white; margin-left: 3px; }
 
-    .play-btn svg {
-      width: 20px;
-      height: 20px;
-      fill: white;
-      margin-left: 3px;
-    }
-
-    .video-info {
-      padding: 18px 20px;
-    }
-
-    .video-label {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--green);
-      margin-bottom: 6px;
-    }
-
-    .video-title {
-      font-size: 16px;
-      font-weight: 700;
-    }
+    .video-info { padding: 18px 20px; }
+    .video-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green); margin-bottom: 6px; }
+    .video-title { font-size: 16px; font-weight: 700; }
 
     /* ── Reviews ── */
     .reviews-grid {
@@ -412,24 +296,9 @@
       padding: 28px 24px;
     }
 
-    .reviewer-name {
-      font-size: 15px;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-
-    .reviewer-role {
-      font-size: 13px;
-      color: var(--green);
-      font-weight: 500;
-      margin-bottom: 16px;
-    }
-
-    .review-text {
-      font-size: 14px;
-      color: var(--text-sub);
-      line-height: 1.65;
-    }
+    .reviewer-name { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+    .reviewer-role { font-size: 13px; color: var(--green); font-weight: 500; margin-bottom: 16px; }
+    .review-text { font-size: 14px; color: var(--text-sub); line-height: 1.65; }
 
     .review-watch {
       display: inline-flex;
@@ -441,20 +310,8 @@
       color: var(--green);
       text-decoration: none;
     }
-
-    .review-watch:hover {
-      text-decoration: underline;
-    }
-
-    .review-watch svg {
-      width: 14px;
-      height: 14px;
-      stroke: currentColor;
-      fill: none;
-      stroke-width: 2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
+    .review-watch:hover { text-decoration: underline; }
+    .review-watch svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
     /* ── Story ── */
     .story-block {
@@ -467,10 +324,7 @@
       align-items: flex-start;
     }
 
-    .story-text {
-      flex: 1;
-    }
-
+    .story-text { flex: 1; }
     .story-aside {
       flex: 0 0 220px;
       background: var(--green-light);
@@ -480,14 +334,7 @@
       color: var(--text-sub);
       line-height: 1.65;
     }
-
-    .story-aside strong {
-      display: block;
-      font-size: 15px;
-      color: var(--text-main);
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
+    .story-aside strong { display: block; font-size: 15px; color: var(--text-main); font-weight: 700; margin-bottom: 8px; }
 
     /* ── School Club CTA ── */
     .school-cta {
@@ -500,16 +347,8 @@
       gap: 32px;
     }
 
-    .school-cta-text h2 {
-      color: white;
-      margin-bottom: 10px;
-    }
-
-    .school-cta-text p {
-      color: oklch(75% 0.04 240);
-      font-size: 16px;
-      margin: 0;
-    }
+    .school-cta-text h2 { color: white; margin-bottom: 10px; }
+    .school-cta-text p { color: oklch(75% 0.04 240); font-size: 16px; margin: 0; }
 
     .school-cta-btn {
       display: inline-flex;
@@ -526,10 +365,7 @@
       text-decoration: none;
       transition: opacity 0.2s;
     }
-
-    .school-cta-btn:hover {
-      opacity: 0.9;
-    }
+    .school-cta-btn:hover { opacity: 0.9; }
 
     /* ── Mailing List ── */
     .mailing-section {
@@ -539,15 +375,8 @@
       border: 1.5px solid var(--border);
       border-radius: 20px;
     }
-
-    .mailing-section h2 {
-      margin-bottom: 12px;
-    }
-
-    .mailing-section p {
-      max-width: 420px;
-      margin: 0 auto 28px;
-    }
+    .mailing-section h2 { margin-bottom: 12px; }
+    .mailing-section p { max-width: 420px; margin: 0 auto 28px; }
 
     .email-form {
       display: flex;
@@ -555,7 +384,6 @@
       max-width: 420px;
       margin: 0 auto;
     }
-
     .email-form input {
       flex: 1;
       padding: 13px 18px;
@@ -568,11 +396,7 @@
       outline: none;
       transition: border-color 0.2s;
     }
-
-    .email-form input:focus {
-      border-color: var(--green);
-    }
-
+    .email-form input:focus { border-color: var(--green); }
     .email-form button {
       padding: 13px 24px;
       background: var(--green);
@@ -586,10 +410,7 @@
       white-space: nowrap;
       transition: opacity 0.2s;
     }
-
-    .email-form button:hover {
-      opacity: 0.9;
-    }
+    .email-form button:hover { opacity: 0.9; }
 
     /* ── Footer ── */
     footer {
@@ -602,35 +423,13 @@
       flex-wrap: wrap;
       gap: 12px;
     }
-
-    .footer-copy {
-      font-size: 13px;
-      color: var(--text-sub);
-    }
-
-    .footer-links {
-      display: flex;
-      gap: 24px;
-    }
-
-    .footer-links a {
-      font-size: 13px;
-      color: var(--text-sub);
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-
-    .footer-links a:hover {
-      color: var(--text-main);
-    }
+    .footer-copy { font-size: 13px; color: var(--text-sub); }
+    .footer-links { display: flex; gap: 24px; }
+    .footer-links a { font-size: 13px; color: var(--text-sub); text-decoration: none; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--text-main); }
 
     /* Social */
-    .social-links {
-      display: flex;
-      gap: 16px;
-      margin-top: 28px;
-    }
-
+    .social-links { display: flex; gap: 16px; margin-top: 28px; }
     .social-link {
       display: inline-flex;
       align-items: center;
@@ -641,91 +440,37 @@
       text-decoration: none;
       transition: color 0.2s;
     }
-
-    .social-link:hover {
-      color: var(--green);
-    }
-
-    .social-link svg {
-      width: 18px;
-      height: 18px;
-      stroke: currentColor;
-      fill: none;
-      stroke-width: 2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
+    .social-link:hover { color: var(--green); }
+    .social-link svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
     /* ── Responsive ── */
     @media (max-width: 768px) {
-      header {
-        padding: 18px 24px;
-      }
-
-      .page-hero {
-        flex-direction: column;
-        padding: 48px 24px;
-      }
-
-      .hero-image-wrap {
-        flex: unset;
-        width: 100%;
-      }
-
-      main {
-        padding: 48px 24px;
-      }
-
-      .feature-grid,
-      .reviews-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .video-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .story-block {
-        flex-direction: column;
-        padding: 32px 24px;
-      }
-
-      .story-aside {
-        flex: unset;
-        width: 100%;
-      }
-
-      .school-cta {
-        flex-direction: column;
-        padding: 32px 24px;
-      }
-
-      .email-form {
-        flex-direction: column;
-      }
-
-      footer {
-        padding: 20px 24px;
-        flex-direction: column;
-        align-items: flex-start;
-      }
+      header { padding: 18px 24px; }
+      .page-hero { flex-direction: column; padding: 48px 24px; }
+      .hero-image-wrap { flex: unset; width: 100%; }
+      main { padding: 48px 24px; }
+      .feature-grid, .reviews-grid { grid-template-columns: 1fr; }
+      .video-grid { grid-template-columns: 1fr; }
+      .story-block { flex-direction: column; padding: 32px 24px; }
+      .story-aside { flex: unset; width: 100%; }
+      .school-cta { flex-direction: column; padding: 32px 24px; }
+      .email-form { flex-direction: column; }
+      footer { padding: 20px 24px; flex-direction: column; align-items: flex-start; }
     }
   </style>
   <link rel="icon" type="image/png" href="uploads/website_logo_transparent_background.png" />
 </head>
-
 <body>
 
   <!-- Header -->
   <header>
     <a class="logo" href="index.html">
-      <img src="uploads/website_logo_transparent_background.png" alt="Zipree"
-        style="height:48px;width:auto;display:block;" />
+      <img src="uploads/website_logo_transparent_background.png" alt="Zipree" style="height:48px;width:auto;display:block;" />
     </a>
     <a class="back-link" href="index.html">
       <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
-        <line x1="13" y1="8" x2="3" y2="8" />
-        <polyline points="7,4 3,8 7,12" />
+        <line x1="13" y1="8" x2="3" y2="8"/>
+        <polyline points="7,4 3,8 7,12"/>
       </svg>
       Back to Home
     </a>
@@ -736,18 +481,14 @@
     <div class="hero-text">
       <div class="hero-tag">Board Game for Kids</div>
       <h1>A Simple <em>Strategy</em> Game for the Whole Family</h1>
-      <p>Go on an adventurous trek, fight shape monsters, collect camping essentials, and reach the campsite before dark
-        — together.</p>
-      <a class="hero-cta" href="https://snapdoodletoys.com/products/fastrek-game" target="_blank" rel="noopener">
-        <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-          <path d="M3 3h14l-1.5 9H4.5L3 3zm4 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm7 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
-        </svg>
-        Buy at Snapdoodle
+      <p>Go on an adventurous trek, fight shape monsters, collect camping essentials, and reach the campsite before dark — together.</p>
+      <a class="hero-cta" href="https://www.amazon.com/dp/B0BJCCW87C" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M3 3h14l-1.5 9H4.5L3 3zm4 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm7 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/></svg>
+        Buy on Amazon
       </a>
     </div>
     <div class="hero-image-wrap">
-      <img src="uploads/Screenshot 2026-04-24 205201.png" alt="Fastrek Board Game Box"
-        style="width:100%;border-radius:24px;box-shadow:0 24px 64px oklch(10% 0.05 240 / 0.5);display:block;" />
+      <img src="uploads/Screenshot 2026-04-24 205201.png" alt="Fastrek Board Game Box" style="width:100%;border-radius:24px;box-shadow:0 24px 64px oklch(10% 0.05 240 / 0.5);display:block;" />
     </div>
   </div>
 
@@ -757,49 +498,30 @@
     <section>
       <div class="section-label">About the Game</div>
       <h2>Cooperative play that builds real skills</h2>
-      <p>Playing cooperative games is a great way to teach kids the importance of teamwork. Working as a team is an
-        important yet difficult skill that parents want to teach their kids. It's an essential social skill that helps
-        kids master other necessary skills like problem solving, strategy building, and planning ahead — required for
-        their development in those early years of life.</p>
-      <p>Fastrek takes you on an adventurous trek where you have to fight shape monsters, complete tasks to collect
-        various camping essentials, and reach your campsite before it gets dark. Kids make a winning strategy together
-        as a team and complete the tasks by mutual cooperation — everyone wins together.</p>
+      <p>Playing cooperative games is a great way to teach kids the importance of teamwork. Working as a team is an important yet difficult skill that parents want to teach their kids. It's an essential social skill that helps kids master other necessary skills like problem solving, strategy building, and planning ahead — required for their development in those early years of life.</p>
+      <p>Fastrek takes you on an adventurous trek where you have to fight shape monsters, complete tasks to collect various camping essentials, and reach your campsite before it gets dark. Kids make a winning strategy together as a team and complete the tasks by mutual cooperation — everyone wins together.</p>
 
       <div class="feature-grid">
         <div class="feature-card">
           <div class="feature-icon">
-            <svg viewBox="0 0 24 24">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-              <circle cx="9" cy="7" r="4" />
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-            </svg>
+            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           </div>
           <div class="feature-title">Teamwork</div>
-          <div class="feature-desc">Kids coordinate and cooperate toward a shared goal — everyone wins or no one does.
-          </div>
+          <div class="feature-desc">Kids coordinate and cooperate toward a shared goal — everyone wins or no one does.</div>
         </div>
         <div class="feature-card">
           <div class="feature-icon">
-            <svg viewBox="0 0 24 24">
-              <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44L7 19.5V4.5A2.5 2.5 0 0 1 9.5 2z" />
-              <path d="M14.5 2A2.5 2.5 0 0 1 17 4.5v15a2.5 2.5 0 0 1-4.96.44L12 19.5V4.5A2.5 2.5 0 0 1 14.5 2z" />
-            </svg>
+            <svg viewBox="0 0 24 24"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44L7 19.5V4.5A2.5 2.5 0 0 1 9.5 2z"/><path d="M14.5 2A2.5 2.5 0 0 1 17 4.5v15a2.5 2.5 0 0 1-4.96.44L12 19.5V4.5A2.5 2.5 0 0 1 14.5 2z"/></svg>
           </div>
           <div class="feature-title">Strategy</div>
-          <div class="feature-desc">Plan each move together, adapt to challenges, and develop critical thinking in a fun
-            setting.</div>
+          <div class="feature-desc">Plan each move together, adapt to challenges, and develop critical thinking in a fun setting.</div>
         </div>
         <div class="feature-card">
           <div class="feature-icon">
-            <svg viewBox="0 0 24 24">
-              <polygon
-                points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
-            </svg>
+            <svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
           </div>
           <div class="feature-title">Adventure</div>
-          <div class="feature-desc">A trek-and-camp theme kids love — fight shape monsters and collect gear along the
-            way.</div>
+          <div class="feature-desc">A trek-and-camp theme kids love — fight shape monsters and collect gear along the way.</div>
         </div>
       </div>
     </section>
@@ -814,9 +536,7 @@
         <a class="video-card" href="https://www.youtube.com/watch?v=aUe_ej4jB4I" target="_blank" rel="noopener">
           <div class="video-thumb">
             <div class="play-btn">
-              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <polygon points="5,3 19,12 5,21" />
-              </svg>
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polygon points="5,3 19,12 5,21"/></svg>
             </div>
           </div>
           <div class="video-info">
@@ -824,13 +544,10 @@
             <div class="video-title">Quick intro — how to get playing fast</div>
           </div>
         </a>
-        <a class="video-card" href="https://www.amazon.com/live/video/046e28431e5a450d89b879231c02ecb1" target="_blank"
-          rel="noopener">
+        <a class="video-card" href="https://www.amazon.com/live/video/046e28431e5a450d89b879231c02ecb1" target="_blank" rel="noopener noreferrer">
           <div class="video-thumb">
             <div class="play-btn">
-              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <polygon points="5,3 19,12 5,21" />
-              </svg>
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polygon points="5,3 19,12 5,21"/></svg>
             </div>
           </div>
           <div class="video-info">
@@ -850,36 +567,27 @@
         <div class="review-card">
           <div class="reviewer-name">Kari Fouhy</div>
           <div class="reviewer-role">Elementary School Teacher, 12 years · Grades K–4</div>
-          <div class="review-text">A mom to three kids ages 3, 6 and 8 who all share a love of games — and a classroom
-            educator who knows what engages young learners.</div>
+          <div class="review-text">A mom to three kids ages 3, 6 and 8 who all share a love of games — and a classroom educator who knows what engages young learners.</div>
           <a class="review-watch" href="https://youtu.be/gzast7P24OE" target="_blank" rel="noopener">
-            <svg viewBox="0 0 24 24">
-              <polygon points="5,3 19,12 5,21" />
-            </svg>
+            <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
             Watch Review
           </a>
         </div>
         <div class="review-card">
           <div class="reviewer-name">Christina Cariker</div>
           <div class="reviewer-role">Elementary Teacher, 5 years · Grades 1–2</div>
-          <div class="review-text">Graduated with a major in Special Education with a master's degree in English
-            Language Learning — a perspective that values inclusive, accessible play.</div>
+          <div class="review-text">Graduated with a major in Special Education with a master's degree in English Language Learning — a perspective that values inclusive, accessible play.</div>
           <a class="review-watch" href="https://youtu.be/0br-3qE6fcE" target="_blank" rel="noopener">
-            <svg viewBox="0 0 24 24">
-              <polygon points="5,3 19,12 5,21" />
-            </svg>
+            <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
             Watch Review
           </a>
         </div>
         <div class="review-card">
           <div class="reviewer-name">Kimberlyn Dunham</div>
           <div class="reviewer-role">Certified Teacher, 10 years · Grades K–2</div>
-          <div class="review-text">Holds endorsements in Reading, English Language Development, and Dyslexia — an expert
-            in how young children learn and process the world around them.</div>
+          <div class="review-text">Holds endorsements in Reading, English Language Development, and Dyslexia — an expert in how young children learn and process the world around them.</div>
           <a class="review-watch" href="https://youtu.be/suHqbN0d5FM" target="_blank" rel="noopener">
-            <svg viewBox="0 0 24 24">
-              <polygon points="5,3 19,12 5,21" />
-            </svg>
+            <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
             Watch Review
           </a>
         </div>
@@ -892,36 +600,20 @@
       <h2>Born from a family adventure</h2>
       <div class="story-block">
         <div class="story-text">
-          <p>Hello — I'm Swati. Together with my 2 kids, we are the game designers of Fastrek. It all started during
-            Covid in 2021 when my spouse told my kids that "we have bought enough games and they need to be creative and
-            build their own pretend-play game." We never could have imagined the far-reaching consequence of this benign
-            statement.</p>
-          <p>From a mock-game built on a plain sheet of paper to the professionally designed game was quite a journey —
-            2 years of working with teams across boundaries. The game was designed by our kids and I in Seattle, the
-            graphics were designed in Manchester, UK, and the game was finally manufactured in China.</p>
-          <p>Fastrek is a game that begins with a trek and ends at a campsite — something we always do in real life.
-            That is the essence of the game and also how our kids picked up the idea.</p>
+          <p>Hello — I'm Swati. Together with my 2 kids, we are the game designers of Fastrek. It all started during Covid in 2021 when my spouse told my kids that "we have bought enough games and they need to be creative and build their own pretend-play game." We never could have imagined the far-reaching consequence of this benign statement.</p>
+          <p>From a mock-game built on a plain sheet of paper to the professionally designed game was quite a journey — 2 years of working with teams across boundaries. The game was designed by our kids and I in Seattle, the graphics were designed in Manchester, UK, and the game was finally manufactured in China.</p>
+          <p>Fastrek is a game that begins with a trek and ends at a campsite — something we always do in real life. That is the essence of the game and also how our kids picked up the idea.</p>
           <div class="social-links">
-            <a class="social-link" href="https://www.facebook.com/profile.php?id=100074063182191" target="_blank"
-              rel="noopener">
-              <svg viewBox="0 0 24 24">
-                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
-              </svg>
+            <a class="social-link" href="https://www.facebook.com/profile.php?id=100074063182191" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
               Facebook
             </a>
             <a class="social-link" href="https://www.instagram.com/zipreegames/" target="_blank" rel="noopener">
-              <svg viewBox="0 0 24 24">
-                <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
-                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
-              </svg>
+              <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
               Instagram
             </a>
-            <a class="social-link" href="mailto:zipreegames@gmail.com">
-              <svg viewBox="0 0 24 24">
-                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                <polyline points="22,6 12,13 2,6" />
-              </svg>
+            <a class="social-link" href="/cdn-cgi/l/email-protection#32485b4240575755535f574172555f535b5e1c515d5f">
+              <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
               Email
             </a>
           </div>
@@ -929,7 +621,7 @@
         <div class="story-aside">
           <strong>Women-Led Small Business</strong>
           Zipree is a women-led small business, proudly designed by a family in Seattle, WA.
-          <br /><br />
+          <br/><br/>
           <strong style="margin-top:16px">School Clubs</strong>
           We offer free sample copies to schools and board game clubs. Get in touch to learn more.
         </div>
@@ -943,7 +635,7 @@
           <h2>Running a school or gaming club?</h2>
           <p>We'd love to support your community. Reach out to request a free sample copy of Fastrek.</p>
         </div>
-        <a class="school-cta-btn" href="mailto:zipreegames@gmail.com">Get in Touch</a>
+        <a class="school-cta-btn" href="/cdn-cgi/l/email-protection#e49e8d949681818385898197a48389858d88ca878b89">Get in Touch</a>
       </div>
     </section>
 
@@ -968,11 +660,10 @@
     <div class="footer-links">
       <a href="privacy-policy.html">Privacy Policy</a>
       <a href="terms-of-use.html">Terms of Use</a>
-      <a href="mailto:zipreegames@gmail.com">Contact</a>
+      <a href="/cdn-cgi/l/email-protection#3c46554c4e59595b5d51594f7c5b515d5550125f5351">Contact</a>
       <a href="https://twitter.com/SimplePortfoli1" target="_blank" rel="noopener">Twitter</a>
     </div>
   </footer>
 
-</body>
-
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
 </html>
